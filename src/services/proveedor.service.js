@@ -4,6 +4,10 @@ export function listar() {
     return http().get('verify/listarProveedores')
 }
 
+export function buscar(buscar) {
+    return http().get('verify/buscarProveedor?Nombre='+buscar)
+}
+
 export function guardar(proveedor) {
     return http().post('verify/guardarProveedor', {
         'Nombre': proveedor.nombre,

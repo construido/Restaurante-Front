@@ -7,3 +7,11 @@ export function listar() {
 export function listarDetalle(compra) {
     return http().get('verify/listarDetalleCompra?Compra='+compra)
 }
+
+export function guardar(proveedor, detalle, total) {
+    return http().post('verify/guardarCompra', {
+        'Proveedor': proveedor.id,
+        'Total': total,
+        'Productos': detalle
+    })
+}

@@ -84,30 +84,36 @@
         <div class="field col-12 md:col-4">
             <span class="p-inputgroup mt-2">
                 <span class="p-float-label">
-                    <InputText id="buscar" type="text"/>
+                    <InputText id="buscar" type="text" v-model="buscarP"/>
                     <label for="buscar">Nombre o NIT</label>
                 </span>
-                <Button v-tooltip.top="'Buscar Proveedor'" icon="pi pi-search" class="p-button-primary"></Button>
+                <Button v-tooltip.top="'Buscar Proveedor'" icon="pi pi-search" class="p-button-primary" @click="buscarProveedor()"></Button>
             </span>
             <span class="p-float-label mt-4 mb-3">
-                <InputText id="buscar" type="text"/>
+                <InputText id="buscar" type="text" v-model="datosProveedor.nombre"/>
                 <label for="buscar">Proveedor</label>
             </span>
-            <Button v-tooltip.top="'Guardar Compra'" class="p-button-success" label="GUARDAR"></Button>
+            <Button v-tooltip.top="'Guardar Compra'" class="p-button-success" label="GUARDAR" @click="guardar()"></Button>
         </div>
     </div>
 
 </template>
 
 <script>
+import * as proveedor from "@/services/proveedor.service"
 import * as producto from "@/services/producto.service"
+import * as compra from "@/services/compra.service"
 import { ref } from '@vue/reactivity'
 
 export default {
     setup(){
+        const datosProveedor = ref({
+            id: 0,
+            nombre: ''
+        })
         const total_compra = ref(0)
+        const buscarP = ref('')
         const buscar = ref('')
-        const arrayProducto = ref([])
         const datosProducto = ref({
             id: 0,
             stock: 0,
@@ -116,13 +122,7 @@ export default {
             cantidad: '',
             categoria: '',         
         })
-        const arrayDetalle = ref([{
-            ID: 1,
-            Precio: 50,
-            Cantidad: 2,
-            Producto: 'Leche',
-            Sub_Total: 100
-        }])
+        const arrayDetalle = ref([])
         const formatCurrency = (value) => {
             if(value)
 				return value.toLocaleString('es-BO', {style: 'currency', currency: 'BOB'});
@@ -134,7 +134,7 @@ export default {
             .then(res => {
                 datosProducto.value.id        = res.data[0].ID_Producto
                 datosProducto.value.stock     = res.data[0].Stock
-                datosProducto.value.precio    = res.data[0].Precio_Venta_P
+                datosProducto.value.precio    = res.data[0].Precio_Compra_P
                 datosProducto.value.producto  = res.data[0].Nombre_Producto
                 datosProducto.value.categoria = res.data[0].Categoria
             })
@@ -154,16 +154,34 @@ export default {
             total_compra.value = total_compra.value - arrayDetalle.value[index].Sub_Total
             arrayDetalle.value.splice(index, 1)
         }
+        function buscarProveedor(){
+            proveedor.buscar(buscarP.value)
+            .then(res => {
+                datosProveedor.value.id      = res.data[0].ID_Proveedor
+                datosProveedor.value.nombre  = res.data[0].Nombre_Razon_Social_Proveedor
+            })
+        }
+        function guardar(){
+            compra.guardar(datosProveedor.value, arrayDetalle.value, total_compra.value)
+            .then(res => {
+                console.log(res)
+            })
+        }
 
         return {
-            formatCurrency,
+            datosProveedor,
             datosProducto,
-            llenarDetalle,
-            buscarProduco,
             arrayDetalle,
             total_compra,
+            buscarP,
+            buscar,
+
+            buscarProveedor,
+            formatCurrency,
+            llenarDetalle,
+            buscarProduco,
             eliminar,
-            buscar
+            guardar
         }
     }
 
