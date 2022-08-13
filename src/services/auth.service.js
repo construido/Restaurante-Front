@@ -8,7 +8,7 @@ export function login(credenciales) {
 }
 
 export async function logout() {
-    const res = await http().post('/logout')
+    const res = await http().post('/verify/logout')
     setTimeout(() => {
         window.location.href = "/login"
         localStorage.removeItem('token')

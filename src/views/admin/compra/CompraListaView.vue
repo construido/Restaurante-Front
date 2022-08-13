@@ -5,53 +5,60 @@
 
     <Toolbar class="mb-4">
         <template #start>
-            <Button label="Nuevo Producto" icon="pi pi-external-link" @click="$router.push('/producto/nuevo')"></Button>
+            <Button label="Nueva Compra" icon="pi pi-external-link" @click="$router.push('/compra/nuevo')"></Button>
         </template>
     </Toolbar>
 
-    <DataTable :value="arrayProducto" responsiveLayout="scroll">
-        <Column field="ID_Producto" header="#" class="text-right"></Column>
-        <Column field="Nombre_Producto" header="NOMBRE"></Column>
-        <Column field="Descripcion_Producto" header="DESCRIPCIÓN"></Column>
-        <Column header="PRECIO"  class="text-right">
+    <DataTable :value="arrayCompra" responsiveLayout="scroll">
+        <Column field="ID_Compra" header="#" class="text-right"></Column>
+        <Column header="FECHA"  class="text-right">
             <template #body="slotProps">
-                {{formatCurrency(slotProps.data.Precio_Venta_P)}}
+                {{formatDate(slotProps.data.Fecha_Compra)}}
             </template>
         </Column>
-        <Column field="Stock" header="STOCK"  class="text-right"></Column>
-        <Column field="Categoria" header="CATEGORIA"></Column>
+        <Column header="MONTO"  class="text-right">
+            <template #body="slotProps">
+                {{formatCurrency(slotProps.data.Monto_Total_Compra)}}
+            </template>
+        </Column>
+        <Column field="Empleado" header="EMPLEADO" ></Column>
+        <Column field="Proveedor" header="PROVEEDOR"></Column>
         <Column header="ESTADO">
             <template #body="slotProps">
-                <span v-if="slotProps.data.Estado_Producto" style="color: darkgreen"> <b> Activo </b> </span>
+                <span v-if="slotProps.data.Estado_Compra" style="color: darkgreen"> <b> Activo </b> </span>
                 <span v-else style="color: crimson"> <b> Inactivo </b> </span>
             </template>
         </Column>
         <Column :exportable="false" style="min-width:8rem" header="ACCIONES">
             <template #body="slotProps">
-                <Button icon="pi pi-pencil" title="Editar" class="p-button-rounded p-button-success mr-2" @click="cargarObjeto(slotProps.data)"></Button>
-                <Button v-if="slotProps.data.Estado_Producto" title="Desactivar" icon="pi pi-lock" 
-                    class="p-button-rounded p-button-danger mr-2" @click="confirmar(slotProps.data)">
+                <ModalDetalle :compra="slotProps.data.ID_Compra"></ModalDetalle>
+                <Button icon="pi pi-print" title="Imprimir Compra" class="p-button-rounded p-button-secondary mr-2 ml-2"></Button>
+                                <Button v-if="slotProps.data.Estado_Compra" title="Desactivar" icon="pi pi-lock" 
+                    class="p-button-rounded p-button-danger">
                 </Button>
-                <Button v-else icon="pi pi-lock-open" title="Activar" class="p-button-rounded p-button-primary" @click="confirmar(slotProps.data)"></Button>
             </template>
         </Column>
     </DataTable>
 </template>
 
 <script>
-import * as producto from "@/services/producto.service"
+import ModalDetalle from "@/components/compra/ModalDetalle.vue"
+import * as compra from "@/services/compra.service"
 import { useConfirm } from "primevue/useconfirm"
 import { useToast } from "primevue/usetoast"
 import { ref, onMounted } from "vue"
-import router from "@/router"
-import store from '@/store'
+import moment from 'moment';
 
 export default {
+    components: {
+        ModalDetalle
+    },
+
     setup(){
         const toast = useToast()
         const confirm = useConfirm()
-        const arrayProducto = ref()
-        const datosProducto = ref({
+        const arrayCompra = ref()
+        const datosCompra = ref({
             id: 0,
             estado: ''
         })
@@ -61,8 +68,8 @@ export default {
             let icons   = producto.Estado_Producto == 1 ? 'pi pi-info-circle' : 'pi pi-exclamation-triangle'
             let button  = producto.Estado_Producto == 1 ? 'p-button-danger' : 'p-button-primary'
             let detalle = producto.Estado_Producto == 1 ? 'Producto desactivado' : 'Producto activado'
-            datosProducto.value.id     = producto.ID_Producto
-            datosProducto.value.estado = producto.Estado_Producto
+            datosCompra.value.id     = producto.ID_Producto
+            datosCompra.value.estado = producto.Estado_Producto
 
             confirm.require({
                 message: 'Estás seguro de continuar?',
@@ -82,37 +89,31 @@ export default {
         }
 
         onMounted(() => {
-            store.dispatch('limpiarProducto')
             listar()
         })
 
         function listar(){
-            producto.listar()
+            compra.listar()
             .then(res => {
-                arrayProducto.value = res.data
+                arrayCompra.value = res.data
             })
-        }
-        function eliminar(){
-            producto.eliminar(datosProducto.value)
-            .then(res => {
-                listar()
-            });
-        }
-        function cargarObjeto(producto){
-            store.dispatch('cargarProducto', producto)
-            router.push('/producto/editar')
         }
         const formatCurrency = (value) => {
             if(value)
 				return value.toLocaleString('es-BO', {style: 'currency', currency: 'BOB'});
 			return;
         }
+        const formatDate = (value) => {
+            if(value)
+				return moment(value).format("DD/MM/YY")
+			return;
+        }
 
         return{
             confirmar,
 
-            cargarObjeto,
-            arrayProducto,
+            arrayCompra,
+            formatDate,
             formatCurrency,
         }
     }

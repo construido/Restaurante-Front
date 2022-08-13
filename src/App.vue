@@ -12,10 +12,10 @@
             <!--<AppFooter />-->
         </div>
 
-		<AppConfig :layoutMode="layoutMode" @layout-change="onLayoutChange" />
+		<!--<AppConfig :layoutMode="layoutMode" @layout-change="onLayoutChange" />
         <transition name="layout-mask">
             <div class="layout-mask p-component-overlay" v-if="mobileMenuActive"></div>
-        </transition>
+        </transition>-->
 	</div>
 
 </template>
@@ -49,6 +49,7 @@ export default {
                         {label: 'Cliente', icon: 'pi pi-fw pi-users', to: '/cliente'},
 						{label: 'Producto', icon: 'pi pi-fw pi-shopping-cart', to: '/producto'},
                         {label: 'Categoria', icon: 'pi pi-fw pi-tags', to: '/categoria'},
+                        {label: 'Proveedor', icon: 'pi pi-fw pi-shopping-bag', to: '/proveedor'},
 					]
 				},
                 {

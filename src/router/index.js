@@ -44,7 +44,19 @@ const routes = [
       {
         path: '/compra',
         name: 'compra',
-        component: () => import(/* webpackChunkName: "producto" */ '../views/admin/compra/CompraView.vue')
+        component: () => import(/* webpackChunkName: "compra" */ '../views/admin/compra/CompraView.vue'),
+        children: [
+          {
+            path: '/compra',
+            name: 'listar',
+            component: () => import(/* webpackChunkName: "producto" */ '../views/admin/compra/CompraListaView.vue')
+          },
+          {
+            path: '/compra/nuevo',
+            name: 'nueva',
+            component: () => import(/* webpackChunkName: "producto" */ '../views/admin/compra/CompraNuevaView.vue')
+          }
+        ]
       },
       {
         path: '/venta',
@@ -55,6 +67,11 @@ const routes = [
         path: '/cliente',
         name: 'cliente',
         component: () => import(/* webpackChunkName: "producto" */ '../views/admin/cliente/ClienteView.vue')
+      },
+      {
+        path: '/proveedor',
+        name: 'proveedor',
+        component: () => import(/* webpackChunkName: "producto" */ '../views/admin/proveedor/ProveedorView.vue')
       },
       {
         path: '/home',

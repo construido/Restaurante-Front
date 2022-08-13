@@ -4,6 +4,10 @@ export function listar() {
     return http().get('verify/listarProductos')
 }
 
+export function buscar(buscar) {
+    return http().get('verify/buscarProducto?Nombre='+buscar)
+}
+
 export function guardar(producto) {
     return http().post('verify/guardarProducto', {
         'Venta': producto.venta,

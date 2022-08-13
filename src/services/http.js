@@ -3,6 +3,7 @@ import axios from "axios"
 export const urlBase = "http://192.168.100.2:8000/api/";
 //export const urlBase = "http://192.168.100.10:8080/api/";
 // export const urlFoto = "http://192.168.89.86:8000/public/";
+//axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token')
 
 export function http(){
     const intercertor = axios.create({
