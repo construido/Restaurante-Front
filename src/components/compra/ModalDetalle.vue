@@ -2,7 +2,7 @@
 
     <Button icon="pi pi-eye" title="Ver Detalle" class="p-button-rounded p-button-info" @click="abrirModal"></Button>
 
-    <Dialog header="Detalles de compra" v-model:visible="proveedorModal" :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '50vw'}" :modal="true">
+    <Dialog header="DETALLES DE COMPRA" v-model:visible="proveedorModal" :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '50vw'}" :modal="true">
         <DataTable :value="arrayDetalle" responsiveLayout="scroll">
             <Column field="Producto" header="PRODUCTO"></Column>
             <Column header="PRECIO" class="text-right">

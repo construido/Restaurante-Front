@@ -59,7 +59,6 @@ export default {
         function eliminar(){
             proveedor.eliminar(datosProveedor.value)
             .then(res => {
-                console.log(res.data.Estado_Proveedor)
                 emit("listar")
                 datosProveedor.value.estado = res.data.Estado_Proveedor
             })

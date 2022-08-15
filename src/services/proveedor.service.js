@@ -4,8 +4,8 @@ export function listar() {
     return http().get('verify/listarProveedores')
 }
 
-export function buscar(buscar) {
-    return http().get('verify/buscarProveedor?Nombre='+buscar)
+export function listarSelect() {
+    return http().get('verify/listarSelectProveedor')
 }
 
 export function guardar(proveedor) {

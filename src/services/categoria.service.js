@@ -4,8 +4,10 @@ export function listarSelect() {
     return http().get('verify/listarCategoriaSelect')
 }
 
-export function listar() {
-    return http().get('verify/listarCategorias')
+// export function listar(params = 1) { primera forma de llamar la paginacion
+export function listar(params, filters) { // segunda forma de llamar la paginacion
+    // params.page = params.page + 1
+    return http().get('verify/listarCategorias?page=' + (params.page + 1) + '&rows=' + params.rows + '&filters=' + filters)
 }
 
 export function guardar(categoria) {

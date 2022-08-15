@@ -5,7 +5,17 @@
 
     <Toolbar class="mb-4">
         <template #start>
-            <Button label="Nueva Categoria" icon="pi pi-external-link" @click="abrirModal"></Button>
+            <Button label="Nueva Categoría" icon="pi pi-external-link" @click="abrirModal"></Button>
+        </template>
+        <template #end>
+            <div class="grid p-fluid">
+                <div class="col-12 md:col-12">
+                    <div class="p-inputgroup">
+                        <InputText placeholder="filtrar por nombre..." v-model="filters"/>
+                        <Button icon="pi pi-search" class="p-button-primary p-button-outlined" v-tooltip.top="'Filtrar Categorías'" @click="listar()"></Button>
+                    </div>
+                </div>
+            </div>
         </template>
     </Toolbar>
 
@@ -41,7 +51,10 @@
         </template>
     </Dialog>
 
-    <DataTable :value="arrayCategoria" responsiveLayout="scroll">
+    <DataTable ref="dt" :value="arrayCategoria" :lazy="true" :rows="10" :paginator="true" :loading="loading" :totalRecords="totalRecords" 
+        class="p-datatable-sm" responsiveLayout="scroll" @page="onPage($event)" @sort="onSort($event)"
+        paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
+        :rowsPerPageOptions="[5, 10, 20, 50, 100]" currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} Categorias">
         <Column field="ID_Categoria" header="#" class="text-right"></Column>
         <Column field="Nombre_Categoria" header="NOMBRE"></Column>
         <Column field="Descripcion_Categoria" header="DESCRIPCIÓN"></Column>
@@ -53,13 +66,15 @@
         </Column>
         <Column :exportable="false" style="min-width:8rem" header="ACCIONES">
             <template #body="slotProps">
-                <Button icon="pi pi-pencil" title="Editar" class="p-button-rounded p-button-success mr-2" @click="cargarEdit(slotProps.data)"></Button>
-                <Button v-if="slotProps.data.Estado_Categoria" title="Desactivar" icon="pi pi-lock" class="p-button-rounded p-button-danger mr-2" @click="cargarDelete(slotProps.data)"></Button>
-                <Button v-else icon="pi pi-lock-open" title="Activar" class="p-button-rounded p-button-primary" @click="cargarDelete(slotProps.data)"></Button>
+                <Button icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"
+                    v-tooltip.top="'Editar Categoría'" @click="cargarEdit(slotProps.data)"></Button>
+                <Button v-if="slotProps.data.Estado_Categoria" icon="pi pi-lock" class="p-button-rounded p-button-danger mr-2"
+                    v-tooltip.top="'Desactivar Categoría'" @click="cargarDelete(slotProps.data)"></Button>
+                <Button v-else icon="pi pi-lock-open" class="p-button-rounded p-button-primary"
+                    v-tooltip.top="'Activar Categoría'" @click="cargarDelete(slotProps.data)"></Button>
             </template>
         </Column>
     </DataTable>
-
   </div>
 </template>
 
@@ -69,12 +84,17 @@ import { useToast } from "primevue/usetoast"
 import { ref, onMounted } from "vue"
 
 export default {
-    setup(){
+    setup(){        
         // variables
-        var message = ref('')
-        var elim = ref(false)
-        var edit = ref(false)
-        var header = ref('Nueva Categoria')
+        const dt = ref()
+        const filters = ref('')
+        const lazyParams = ref({})
+        const loading = ref(false)
+        const totalRecords = ref(0)
+        const message = ref('')
+        const elim = ref(false)
+        const edit = ref(false)
+        const header = ref('Nueva Categoria')
         const toast = useToast()
         const datosCategoria = ref({
             id:'',
@@ -92,9 +112,30 @@ export default {
             limpiarCampos()
             categoriaModal.value = false;
         }
+        const onPage = (event) => {
+            lazyParams.value = event // primera forma de llamar la paginacion
+            /*event = JSON.stringify(event.page) // segunda forma de llamar la paginacion
+            event = parseInt(event)
+            lazyParams.value.page = event + 1*/
+            listar()
+        }
+        const onSort = (event) => {
+            event = JSON.stringify(event.page)
+            event = parseInt(event)
+            lazyParams.value.page = event + 1
+            listar()
+        }
 
         // funcion que se activa al ingresar a la página - load
         onMounted(() => {
+            loading.value = true
+            lazyParams.value = {
+                first: 0,
+                rows: dt.value.rows,
+                sortField: null,
+                sortOrder: null,
+                page: 0
+            }
             listar()
         })
 
@@ -118,9 +159,16 @@ export default {
             datosCategoria.value.estado = 0
         }
         function listar(){
-            categoria.listar()
+            // console.log(lazyParams.value.rows)
+            // categoria.listar(lazyParams.value.page + 1) primera forma de llamar la paginacion
+            categoria.listar(lazyParams.value, filters.value) // segunda forma de llamar la paginacion
             .then(res => {
-                arrayCategoria.value = res.data
+                loading.value = true
+                setTimeout(() => {
+                    arrayCategoria.value = res.data.data
+                    totalRecords.value  = res.data.total
+                    loading.value = false
+                }, 2000)
             });
         }
         function guardar(){
@@ -170,6 +218,14 @@ export default {
 
         // variables y funciones que retornan un valor y se utilizan en el template
         return {
+            dt,
+            onPage,
+            onSort,
+            filters,
+            loading,
+            lazyParams,
+            totalRecords,
+
             abrirModal,
             cerrarModal,
             categoriaModal,
@@ -182,10 +238,11 @@ export default {
             cargarDelete,
 
             editar,
+            listar,
             guardar,
             eliminar,
             datosCategoria,
-            arrayCategoria
+            arrayCategoria,
         }
     }
 }

@@ -1,4 +1,7 @@
 <template>
+
+    <Toast/>
+
     <div class="p-fluid grid my-4">
         <div class="field col-12 md:col-4">
             <span class="p-inputgroup">
@@ -82,17 +85,17 @@
         </div>
 
         <div class="field col-12 md:col-4">
-            <span class="p-inputgroup mt-2">
-                <span class="p-float-label">
-                    <InputText id="buscar" type="text" v-model="buscarP"/>
-                    <label for="buscar">Nombre o NIT</label>
-                </span>
-                <Button v-tooltip.top="'Buscar Proveedor'" icon="pi pi-search" class="p-button-primary" @click="buscarProveedor()"></Button>
-            </span>
-            <span class="p-float-label mt-4 mb-3">
-                <InputText id="buscar" type="text" v-model="datosProveedor.nombre"/>
-                <label for="buscar">Proveedor</label>
-            </span>
+            <Dropdown v-model="datosProveedor" :options="listaProveedor" optionLabel="Nombre_Razon_Social_Proveedor" 
+                :filter="true" placeholder="Seleccione Proveedor" :showClear="true" class="mb-3">
+                <template #value="slotProps">
+                    <div class="country-item country-item-value" v-if="slotProps.value">
+                        <div>{{slotProps.value.Nombre_Razon_Social_Proveedor}}</div>
+                    </div>
+                    <span v-else>
+                        {{slotProps.placeholder}}
+                    </span>
+                </template>
+            </Dropdown>
             <Button v-tooltip.top="'Guardar Compra'" class="p-button-success" label="GUARDAR" @click="guardar()"></Button>
         </div>
     </div>
@@ -103,17 +106,17 @@
 import * as proveedor from "@/services/proveedor.service"
 import * as producto from "@/services/producto.service"
 import * as compra from "@/services/compra.service"
-import { ref } from '@vue/reactivity'
+import { useToast } from "primevue/usetoast"
+import { ref, onMounted } from "vue"
+import router from "@/router"
 
 export default {
     setup(){
-        const datosProveedor = ref({
-            id: 0,
-            nombre: ''
-        })
+        const listaProveedor = ref([])
+        const datosProveedor = ref()
         const total_compra = ref(0)
-        const buscarP = ref('')
         const buscar = ref('')
+        const toast = useToast()
         const datosProducto = ref({
             id: 0,
             stock: 0,
@@ -129,6 +132,16 @@ export default {
 			return;
         }
 
+        onMounted(() => {
+            listarP()
+        })
+
+        function listarP(){
+            proveedor.listarSelect()
+            .then(res => {
+                listaProveedor.value = res.data
+            })
+        }
         function buscarProduco(){
             producto.buscar(buscar.value)
             .then(res => {
@@ -154,29 +167,29 @@ export default {
             total_compra.value = total_compra.value - arrayDetalle.value[index].Sub_Total
             arrayDetalle.value.splice(index, 1)
         }
-        function buscarProveedor(){
-            proveedor.buscar(buscarP.value)
-            .then(res => {
-                datosProveedor.value.id      = res.data[0].ID_Proveedor
-                datosProveedor.value.nombre  = res.data[0].Nombre_Razon_Social_Proveedor
-            })
-        }
         function guardar(){
             compra.guardar(datosProveedor.value, arrayDetalle.value, total_compra.value)
             .then(res => {
-                console.log(res)
+                toastSuccess()
+                setTimeout(() => {
+                    router.push('/compra')
+                }, 2000)
             })
+        }
+        function toastSuccess(){
+            toast.add({severity: 'success', summary: 'Éxito', detail: 'Guardado Correctamente', life: 3000})
         }
 
         return {
+            listaProveedor,
+
             datosProveedor,
             datosProducto,
             arrayDetalle,
             total_compra,
-            buscarP,
             buscar,
+            toast,
 
-            buscarProveedor,
             formatCurrency,
             llenarDetalle,
             buscarProduco,
