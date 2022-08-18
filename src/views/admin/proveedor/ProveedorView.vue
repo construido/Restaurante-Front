@@ -10,7 +10,7 @@
             </template>
         </Toolbar>
         
-        <DataTable :value="arrayProveedor" responsiveLayout="scroll">
+        <DataTable :value="arrayProveedor" responsiveLayout="scroll" class="p-datatable-sm">
             <Column field="ID_Proveedor" header="#" class="text-right"></Column>
             <Column field="Nombre_Razon_Social_Proveedor" header="RAZÓN SOCIAL"></Column>
             <Column field="CI_NIT_Proveedor" header="CI / NIT" class="text-right"></Column>

@@ -9,7 +9,7 @@
         </template>
     </Toolbar>
 
-    <DataTable :value="arrayCompra" responsiveLayout="scroll">
+    <DataTable :value="arrayCompra" responsiveLayout="scroll" class="p-datatable-sm" style="white-space:nowrap">
         <Column field="ID_Compra" header="#" class="text-right"></Column>
         <Column header="FECHA"  class="text-right">
             <template #body="slotProps">

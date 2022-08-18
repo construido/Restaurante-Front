@@ -61,7 +61,19 @@ const routes = [
       {
         path: '/venta',
         name: 'venta',
-        component: () => import(/* webpackChunkName: "producto" */ '../views/admin/venta/VentaView.vue')
+        component: () => import(/* webpackChunkName: "producto" */ '../views/admin/venta/VentaView.vue'),
+        children: [
+          {
+            path: '/venta',
+            name: 'listarVenta',
+            component: () => import(/* webpackChunkName: "producto" */ '../views/admin/venta/VentaListaView.vue')
+          },
+          {
+            path: '/venta/nuevo',
+            name: 'nuevaVenta',
+            component: () => import(/* webpackChunkName: "producto" */ '../views/admin/venta/VentaNuevaView.vue')
+          }
+        ]
       },
       {
         path: '/cliente',

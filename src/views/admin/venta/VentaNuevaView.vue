@@ -80,41 +80,41 @@
                 </Column>
             </DataTable>
             <div class="mt-2">
-                <label> <b> TOTAL </b> {{formatCurrency(total_compra)}} </label>
+                <label> <b> TOTAL </b> {{formatCurrency(total_venta)}} </label>
             </div>
         </div>
 
         <div class="field col-12 md:col-4">
-            <Dropdown v-model="datosProveedor" :options="listaProveedor" optionLabel="Nombre_Razon_Social_Proveedor" 
-                :filter="true" placeholder="Seleccione Proveedor" :showClear="true" class="mb-3">
+            <Dropdown v-model="datosCliente" :options="listaCliente" optionLabel="Nombre_Razon_Social_Cliente" 
+                :filter="true" placeholder="Seleccione Cliente" :showClear="true" class="mb-3">
                 <template #value="slotProps">
                     <div class="country-item country-item-value" v-if="slotProps.value">
-                        <div>{{slotProps.value.Nombre_Razon_Social_Proveedor}}</div>
+                        <div>{{slotProps.value.Nombre_Razon_Social_Cliente}}</div>
                     </div>
                     <span v-else>
                         {{slotProps.placeholder}}
                     </span>
                 </template>
             </Dropdown>
-            <Button v-tooltip.top="'Guardar Compra'" class="p-button-success" label="GUARDAR" @click="guardar()"></Button>
+            <Button v-tooltip.top="'Guardar Venta'" class="p-button-success" label="GUARDAR" @click="guardar()"></Button>
         </div>
     </div>
 
 </template>
 
 <script>
-import * as proveedor from "@/services/proveedor.service"
+import * as cliente from "@/services/cliente.service"
 import * as producto from "@/services/producto.service"
-import * as compra from "@/services/compra.service"
+import * as venta from "@/services/venta.service"
 import { useToast } from "primevue/usetoast"
 import { ref, onMounted } from "vue"
 import router from "@/router"
 
 export default {
     setup(){
-        const listaProveedor = ref([])
-        const datosProveedor = ref()
-        const total_compra = ref(0)
+        const listaCliente = ref([])
+        const datosCliente = ref()
+        const total_venta = ref(0)
         const buscar = ref('')
         const toast = useToast()
         const datosProducto = ref({
@@ -133,13 +133,13 @@ export default {
         }
 
         onMounted(() => {
-            listarP()
+            listarC()
         })
 
-        function listarP(){
-            proveedor.listarSelect()
+        function listarC(){
+            cliente.listarSelect()
             .then(res => {
-                listaProveedor.value = res.data
+                listaCliente.value = res.data
             })
         }
         function buscarProduco(){
@@ -147,7 +147,7 @@ export default {
             .then(res => {
                 datosProducto.value.id        = res.data[0].ID_Producto
                 datosProducto.value.stock     = res.data[0].Stock
-                datosProducto.value.precio    = res.data[0].Precio_Compra_P
+                datosProducto.value.precio    = res.data[0].Precio_Venta_P
                 datosProducto.value.producto  = res.data[0].Nombre_Producto
                 datosProducto.value.categoria = res.data[0].Categoria
             })
@@ -161,18 +161,18 @@ export default {
                 Sub_Total: datosProducto.value.precio * datosProducto.value.cantidad
             })
 
-            total_compra.value = total_compra.value + (datosProducto.value.precio * datosProducto.value.cantidad)
+            total_venta.value = total_venta.value + (datosProducto.value.precio * datosProducto.value.cantidad)
         }
         function eliminar(index){
-            total_compra.value = total_compra.value - arrayDetalle.value[index].Sub_Total
+            total_venta.value = total_venta.value - arrayDetalle.value[index].Sub_Total
             arrayDetalle.value.splice(index, 1)
         }
         function guardar(){
-            compra.guardar(datosProveedor.value, arrayDetalle.value, total_compra.value)
+            venta.guardar(datosCliente.value, arrayDetalle.value, total_venta.value)
             .then(res => {
                 toastSuccess()
                 setTimeout(() => {
-                    router.push('/compra')
+                    router.push('/venta')
                 }, 2000)
             })
         }
@@ -181,12 +181,12 @@ export default {
         }
 
         return {
-            listaProveedor,
+            listaCliente,
 
-            datosProveedor,
+            datosCliente,
             datosProducto,
             arrayDetalle,
-            total_compra,
+            total_venta,
             buscar,
             toast,
 

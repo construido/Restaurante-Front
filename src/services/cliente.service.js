@@ -4,6 +4,10 @@ export function listar() {
     return http().get('verify/listarClientes')
 }
 
+export function listarSelect() {
+    return http().get('verify/listarSelectCliente')
+}
+
 export function guardar(cliente) {
     return http().post('verify/guardarCliente', {
         'Nombre': cliente.nombre,
