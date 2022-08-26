@@ -58,7 +58,7 @@ export default {
                         {
                             label: 'Caja', icon: 'pi pi-fw pi-inbox',
                             items: [
-                                {label: 'Nuevo', icon: 'pi pi-fw pi-plus-circle'},
+                                {label: 'Nuevo', icon: 'pi pi-fw pi-plus-circle', to: '/caja'},
                                 {label: 'Salida', icon: 'pi pi-fw pi-upload'},
                                 {label: 'Entrada', icon: 'pi pi-fw pi-download'},
                             ]

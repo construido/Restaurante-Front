@@ -11,12 +11,12 @@
 
     <DataTable :value="arrayCompra" responsiveLayout="scroll" class="p-datatable-sm" style="white-space:nowrap">
         <Column field="ID_Compra" header="#" class="text-right"></Column>
-        <Column header="FECHA"  class="text-right">
+        <Column header="FECHA" class="text-right">
             <template #body="slotProps">
                 {{formatDate(slotProps.data.Fecha_Compra)}}
             </template>
         </Column>
-        <Column header="MONTO"  class="text-right">
+        <Column header="MONTO" class="text-right">
             <template #body="slotProps">
                 {{formatCurrency(slotProps.data.Monto_Total_Compra)}}
             </template>
@@ -33,7 +33,7 @@
             <template #body="slotProps">
                 <ModalDetalle :compra="slotProps.data.ID_Compra"></ModalDetalle>
                 <Button icon="pi pi-print" title="Imprimir Compra" class="p-button-rounded p-button-secondary mr-2 ml-2"></Button>
-                                <Button v-if="slotProps.data.Estado_Compra" title="Desactivar" icon="pi pi-lock" 
+                <Button v-if="slotProps.data.Estado_Compra" title="Desactivar" icon="pi pi-lock"
                     class="p-button-rounded p-button-danger">
                 </Button>
             </template>
