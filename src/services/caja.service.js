@@ -8,9 +8,18 @@ export function listarDetalle(caja) {
     return http().get('verify/listarMovimientos?Caja='+caja)
 }
 
+export function ingresoSalida(datos) {
+    return http().post('verify/ingresoSalidaCaja', {
+        'Caja': datos.id,
+        'Tipo': datos.tipo,
+        'Monto': datos.monto,
+        'Observacion': datos.observacion
+    })
+}
+
 export function apertura(caja) {
     return http().post('verify/aperturaCaja', {
-        'Inicio': caja.inicio,
+        'Inicio': caja.monto,
         'Observacion': caja.observacion
     })
 }

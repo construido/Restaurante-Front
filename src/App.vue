@@ -44,6 +44,7 @@ export default {
 				{
 					label: 'Registro', icon: 'pi pi-fw pi-sitemap',
 					items: [
+                        {label: 'Caja', icon: 'pi pi-fw pi-inbox', to: '/caja'},
 						{label: 'Venta', icon: 'pi pi-fw pi-wallet', to: '/venta'},
                         {label: 'Compra', icon: 'pi pi-fw pi-money-bill', to: '/compra'},
                         {label: 'Cliente', icon: 'pi pi-fw pi-users', to: '/cliente'},
@@ -55,14 +56,6 @@ export default {
                 {
                     label: 'Mantenimiento', icon: 'pi pi-fw pi-search',
                     items: [
-                        {
-                            label: 'Caja', icon: 'pi pi-fw pi-inbox',
-                            items: [
-                                {label: 'Nuevo', icon: 'pi pi-fw pi-plus-circle', to: '/caja'},
-                                {label: 'Salida', icon: 'pi pi-fw pi-upload'},
-                                {label: 'Entrada', icon: 'pi pi-fw pi-download'},
-                            ]
-                        },
                         {
                             label: 'Inventario', icon: 'pi pi-fw pi-book',
                             items: [

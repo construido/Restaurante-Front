@@ -21,10 +21,10 @@
 
         <Dialog :header="header" v-model:visible="cajaModal" :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '50vw'}" :modal="true">
             <div class="p-fluid grid p-4">
-                <div v-if="btnCerrar == false" class="field col-12 md:col-12">
+                <div v-if="btnCerrar != 2" class="field col-12 md:col-12">
                     <span class="p-float-label">
-                        <InputText id="inputtext" type="text" v-model="datosCaja.inicio"/>
-                        <label for="inputtext" autofocus>Saldo Inicial</label>
+                        <InputText id="inputtext" type="text" v-model="datosCaja.monto"/>
+                        <label for="inputtext" autofocus>Monto</label>
                     </span>
                 </div>
 
@@ -38,8 +38,11 @@
 
             <template #footer>
                 <Button label="Cerrar" icon="pi pi-times" @click="cerrarModal" class="p-button-danger p-button-text"></Button>
-                <Button v-if="btnCerrar == true" label="Aceptar" icon="pi pi-check" class="p-button-warning p-button-text" @click="cierre()"></Button>
-                <Button v-else label="Guardar" icon="pi pi-check" class="p-button-primary p-button-text" @click="apertura()"></Button>
+                <Button v-if="btnCerrar == 1" label="Guardar" icon="pi pi-check" class="p-button-primary p-button-text" @click="apertura()"></Button>
+                <Button v-else-if="btnCerrar == 2" label="Aceptar" icon="pi pi-check" class="p-button-warning p-button-text" @click="cierre()"></Button>
+                <Button v-else-if="btnCerrar == 3" label="Ok"
+                    icon="pi pi-check" class="p-button-primary p-button-text" @click="ingresoSalida()">
+                </Button>
             </template>
         </Dialog>
 
@@ -92,10 +95,10 @@
                     <Button icon="pi pi-print" v-tooltip.top="'Imprimir Movimientos'"  class="p-button-rounded p-button-secondary ml-2"></Button>
                     <template v-if="slotProps.data.Estado_Caja == 1">
                         <Button icon="pi pi-plus" v-tooltip.top="'Ingreso Caja'" 
-                            class="p-button-rounded p-button-success ml-2">
+                            class="p-button-rounded p-button-success ml-2" @click="obtenerDatos(slotProps.data.ID_Caja, 'Ingreso')">
                         </Button>
                         <Button icon="pi pi-minus" v-tooltip.top="'Salida Caja'" 
-                            class="p-button-rounded p-button-warning ml-2">
+                            class="p-button-rounded p-button-warning ml-2" @click="obtenerDatos(slotProps.data.ID_Caja, 'Salida')">
                         </Button>
                         <Button icon="pi pi-lock" v-tooltip.top="'Cerrar Caja'" 
                             class="p-button-rounded p-button-danger ml-2" @click="llenarDatos(slotProps.data)">
@@ -133,7 +136,7 @@ import moment from 'moment'
 export default {
     setup(){
         const toast = useToast()
-        const btnCerrar = ref(false)
+        const btnCerrar = ref(1)
         const header = ref('ABRIR CAJA')
         const dt = ref()
         // const filters = ref('')
@@ -152,7 +155,8 @@ export default {
         const arrayCaja = ref()
         const datosCaja = ref({
             id: 0,
-            inicio: '',
+            tipo: '',
+            monto: '',
             observacion: ''
         })
         const cajaModal  = ref(false)
@@ -184,12 +188,8 @@ export default {
 				return moment(value).format("DD-MM-YYYY")
 			return;
         }
-
-        function toastOpen(){
-            toast.add({severity: 'success', summary: 'Caja Abierta', detail: 'Registrado Correctamente', life: 3000})
-        }
-        function toastClose(){
-            toast.add({severity: 'info', summary: 'Caja Cerrada', detail: 'Actualizado Correctamente', life: 3000})
+        function toastMessage(color, header, message) {
+            toast.add({severity: color, summary: header, detail: message, life: 3000})
         }
 
         onMounted(() => {
@@ -229,13 +229,18 @@ export default {
         function apertura(){
             caja.apertura(datosCaja.value)
             .then(res => {
-                cerrarModal()
-                toastOpen()
-                listar()
+                if(res.data == 1){
+                    cerrarModal()
+                    toastMessage('error', 'Error', 'Ya tienes una CAJA abierta')
+                }else{
+                    cerrarModal()
+                    toastMessage('success', 'Éxito', 'Caja Abierta')
+                    listar()
+                }
             })
         }
         function llenarDatos(objeto){
-            btnCerrar.value = true
+            btnCerrar.value = 2
             header.value = 'CERRAR CAJA'
             datosCaja.value.id = objeto.ID_Caja
             datosCaja.value.observacion = objeto.Observacion
@@ -245,14 +250,33 @@ export default {
             caja.cierre(datosCaja.value)
             .then(res => {
                 listar()
-                toastClose()
+                toastMessage('success', 'Éxito', 'Caja Cerrada')
                 cerrarModal()
                 limpiarCampos()
             })
         }
         function limpiarCampos(){
-            btnCerrar.value = false
+            btnCerrar.value = 1
+            datosCaja.value.tipo = ''
+            datosCaja.value.monto = ''
             header.value = 'ABRIR CAJA'
+            datosCaja.value.observacion = ''
+        }
+        function obtenerDatos(caja, tipo){
+            btnCerrar.value = 3
+            header.value = (tipo == 'Ingreso' ? 'INGRESO CAJA' : 'SALIDA CAJA')
+            datosCaja.value.id = caja
+            datosCaja.value.tipo = tipo
+            abrirModal()
+        }
+        function ingresoSalida(){
+            caja.ingresoSalida(datosCaja.value)
+            .then(res => {
+                limpiarCampos()
+                cerrarModal()
+                toastMessage('info', 'Éxito', 'Actualizado Correctamente')
+                listar()
+            })
         }
 
         return {
@@ -275,6 +299,8 @@ export default {
             cierre,
             apertura,
             llenarDatos,
+            obtenerDatos,
+            ingresoSalida,
 
             obtenerID,
             detalleModal,
