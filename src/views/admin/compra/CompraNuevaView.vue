@@ -106,6 +106,7 @@
 import * as proveedor from "@/services/proveedor.service"
 import * as producto from "@/services/producto.service"
 import * as compra from "@/services/compra.service"
+import * as caja from "@/services/caja.service"
 import { useToast } from "primevue/usetoast"
 import { ref, onMounted } from "vue"
 import router from "@/router"
@@ -134,8 +135,20 @@ export default {
 
         onMounted(() => {
             listarP()
+            verificarCaja()
         })
 
+        function verificarCaja(){
+            caja.buscarCaja()
+            .then(res => {
+                if(res.data.length == 0){
+                    toastMessage('error', 'Error', 'Debe de abrir Caja')
+                    setTimeout(() => {
+                        router.go(-1)
+                    }, 2000)
+                }
+            })
+        }
         function listarP(){
             proveedor.listarSelect()
             .then(res => {
@@ -170,14 +183,14 @@ export default {
         function guardar(){
             compra.guardar(datosProveedor.value, arrayDetalle.value, total_compra.value)
             .then(res => {
-                toastSuccess()
+                toastMessage('success', 'Éxito', 'Guardado Correctamente')
                 setTimeout(() => {
-                    router.push('/compra')
+                    router.go(-1)
                 }, 2000)
             })
         }
-        function toastSuccess(){
-            toast.add({severity: 'success', summary: 'Éxito', detail: 'Guardado Correctamente', life: 3000})
+        function toastMessage(color, header, message){
+            toast.add({severity: color, summary: header, detail: message, life: 3000})
         }
 
         return {

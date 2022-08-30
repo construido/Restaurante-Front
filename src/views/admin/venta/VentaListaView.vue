@@ -9,7 +9,10 @@
         </template>
     </Toolbar>
 
-    <DataTable :value="arrayVenta" responsiveLayout="scroll" class="p-datatable-sm" style="white-space:nowrap">
+    <DataTable :value="arrayVenta" responsiveLayout="scroll" class="p-datatable-sm" style="white-space:nowrap"
+        ref="dt" :lazy="true" :rows="10" :paginator="true" :loading="loading" :totalRecords="totalRecords" @page="onPage($event)"
+        paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
+        :rowsPerPageOptions="[5, 10, 20, 50, 100]" currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} Ventas">
         <Column field="ID_Venta" header="#" class="text-right"></Column>
         <Column header="FECHA"  class="text-right">
             <template #body="slotProps">
@@ -21,8 +24,8 @@
                 {{formatCurrency(slotProps.data.Monto_Total_Venta)}}
             </template>
         </Column>
-        <Column field="Empleado" header="EMPLEADO" ></Column>
         <Column field="Cliente" header="CLIENTE"></Column>
+        <Column field="Empleado" header="EMPLEADO" ></Column>
         <Column header="ESTADO">
             <template #body="slotProps">
                 <span v-if="slotProps.data.Estado_Venta" style="color: darkgreen"> <b> Activo </b> </span>
@@ -88,14 +91,36 @@ export default {
             });
         }
 
+        const dt = ref()
+        const loading = ref(false)
+        const lazyParams = ref()
+        const totalRecords = ref(0)
+        const onPage = (event) => {
+            lazyParams.value = event
+            listar()
+        }
+
         onMounted(() => {
+            loading.value = true
+            lazyParams.value = {
+                first: 0,
+                rows: dt.value.rows,
+                sortField: null,
+                sortOrder: null,
+                page: 0
+            }
             listar()
         })
 
         function listar(){
-            venta.listar()
+            venta.listar(lazyParams.value)
             .then(res => {
-                arrayVenta.value = res.data
+                loading.value = true
+                setTimeout(() => {
+                    arrayVenta.value = res.data.data
+                    totalRecords.value  = res.data.total
+                    loading.value = false
+                }, 2000)
             })
         }
         const formatCurrency = (value) => {
@@ -110,6 +135,11 @@ export default {
         }
 
         return{
+            dt,
+            onPage,
+            loading,
+            totalRecords,
+
             confirmar,
 
             arrayVenta,

@@ -8,6 +8,10 @@ export function listarDetalle(caja) {
     return http().get('verify/listarMovimientos?Caja='+caja)
 }
 
+export function buscarCaja() {
+    return http().post('verify/buscarCaja')
+}
+
 export function ingresoSalida(datos) {
     return http().post('verify/ingresoSalidaCaja', {
         'Caja': datos.id,

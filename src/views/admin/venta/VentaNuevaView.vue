@@ -103,9 +103,10 @@
 </template>
 
 <script>
-import * as cliente from "@/services/cliente.service"
 import * as producto from "@/services/producto.service"
+import * as cliente from "@/services/cliente.service"
 import * as venta from "@/services/venta.service"
+import * as caja from "@/services/caja.service"
 import { useToast } from "primevue/usetoast"
 import { ref, onMounted } from "vue"
 import router from "@/router"
@@ -117,25 +118,28 @@ export default {
         const total_venta = ref(0)
         const buscar = ref('')
         const toast = useToast()
-        const datosProducto = ref({
-            id: 0,
-            stock: 0,
-            precio: 0,
-            producto: '',
-            cantidad: '',
-            categoria: '',         
-        })
+        const datosProducto = ref({})
         const arrayDetalle = ref([])
         const formatCurrency = (value) => {
-            if(value)
-				return value.toLocaleString('es-BO', {style: 'currency', currency: 'BOB'});
-			return;
+            return value.toLocaleString('es-BO', {style: 'currency', currency: 'BOB'});
         }
 
         onMounted(() => {
             listarC()
+            verificarCaja()
         })
 
+        function verificarCaja(){
+            caja.buscarCaja()
+            .then(res => {
+                if(res.data.length == 0){
+                    toastMessage('error', 'Error', 'Debe de abrir Caja')
+                    setTimeout(() => {
+                        router.go(-1)
+                    }, 2000)
+                }
+            })
+        }
         function listarC(){
             cliente.listarSelect()
             .then(res => {
@@ -153,15 +157,21 @@ export default {
             })
         }
         function llenarDetalle(){
-            arrayDetalle.value.push({
-                ID: datosProducto.value.id,
-                Precio: datosProducto.value.precio,
-                Producto: datosProducto.value.producto,
-                Cantidad: datosProducto.value.cantidad,
-                Sub_Total: datosProducto.value.precio * datosProducto.value.cantidad
-            })
+            if(datosProducto.value.id && datosProducto.value.cantidad){
+                arrayDetalle.value.push({
+                    ID: datosProducto.value.id,
+                    Precio: datosProducto.value.precio,
+                    Producto: datosProducto.value.producto,
+                    Cantidad: datosProducto.value.cantidad,
+                    Sub_Total: datosProducto.value.precio * datosProducto.value.cantidad
+                })
 
-            total_venta.value = total_venta.value + (datosProducto.value.precio * datosProducto.value.cantidad)
+                total_venta.value = total_venta.value + (datosProducto.value.precio * datosProducto.value.cantidad)
+                datosProducto.value = {}
+                buscar.value = ''
+            }else{
+                toastMessage('error', 'Error', 'Debe llenar todos los campos')
+            }
         }
         function eliminar(index){
             total_venta.value = total_venta.value - arrayDetalle.value[index].Sub_Total
@@ -170,14 +180,18 @@ export default {
         function guardar(){
             venta.guardar(datosCliente.value, arrayDetalle.value, total_venta.value)
             .then(res => {
-                toastSuccess()
-                setTimeout(() => {
-                    router.push('/venta')
-                }, 2000)
+                if(res == 422){
+                    toastMessage('error', 'Error', 'Debe llenar todos los campos')
+                }else{
+                    toastMessage('success', 'Éxito', 'Guardado Correctamente')
+                    setTimeout(() => {
+                        router.push('/venta')
+                    }, 2000)
+                }
             })
         }
-        function toastSuccess(){
-            toast.add({severity: 'success', summary: 'Éxito', detail: 'Guardado Correctamente', life: 3000})
+        function toastMessage(color, header, message) {
+            toast.add({severity: color, summary: header, detail: message, life: 3000})
         }
 
         return {

@@ -11,9 +11,7 @@ export function buscar(buscar) {
 export function guardar(producto) {
     return http().post('verify/guardarProducto', {
         'Venta': producto.venta,
-        'Stock': producto.stock,
         'Compra': producto.compra,
-        'Salida': producto.salida,
         'Nombre': producto.nombre,
         'Minimo': producto.minimo,
         'Ingreso': producto.ingreso,

@@ -1,7 +1,8 @@
 <template>
 
-    <!--<img src="../../../../public/images/default.png" alt="Image" class="my-4"  width="250" preview>-->
+    <!--<img src="../../../../public/images/default.png" alt="Image" class="my-4"  width="250" preview>
     <img src="http://192.168.100.2:8000/default.png" alt="Image" class="my-4"  width="200" preview>
+    <InputText type="file" value=""/>-->
 
     <Toast/>
 
@@ -35,23 +36,8 @@
         </div>
         <div class="field col-12 md:col-4">
             <span class="p-float-label">
-                <InputNumber id="salida" v-model="datosProducto.salida"/>
-                <label for="salida">Salida</label>
-            </span>
-        </div>
-        <div class="field col-12 md:col-4">
-            <span class="p-float-label">
-                <InputNumber id="stock" v-model="datosProducto.stock"/>
-                <label for="stock">Stock</label>
-            </span>
-        </div>
-    </div>
-
-    <div class="p-fluid grid my-2">
-        <div class="field col-12 md:col-4">
-            <span class="p-float-label">
-                <Textarea id="textarea" rows="5" v-model="datosProducto.descripcion"></Textarea>
-                <label for="textarea">Descripción</label>
+                <InputNumber id="minimo" v-model="datosProducto.minimo"/>
+                <label for="minimo">Stock Mínimo</label>
             </span>
         </div>
         <div  class="field col-12 md:col-4">
@@ -60,12 +46,21 @@
                 <label for="textarea">Categoria</label>
             </span>
         </div>
-        <div class="field col-12 md:col-4">
+    </div>
+
+    <div class="p-fluid grid my-2">
+        <div class="field col-12 md:col-8">
             <span class="p-float-label">
-                <InputNumber id="minimo" v-model="datosProducto.minimo"/>
-                <label for="minimo">Stock Mínimo</label>
+                <Textarea id="textarea" rows="5" v-model="datosProducto.descripcion"></Textarea>
+                <label for="textarea">Descripción</label>
             </span>
         </div>
+        <!--<div class="field col-12 md:col-4">
+            <label for="imagen">Imagen</label>
+            <FileUpload mode="basic" accept="image/*" chooseLabel="Subir Imagen"/>
+            <input type="file"/>
+            <InputText type="file" value=""/>
+        </div>-->
     </div>
 
     <Button label="Cerrar" icon="pi pi-times" class="p-button-danger p-button-text" @click="$router.go(-1)" title="Cerrar"></Button>
@@ -86,11 +81,9 @@ export default {
         const arrayCategoriaSelect = ref()
         const datosProducto = ref({
             venta: 0,
-            stock: 0,
             nombre: '',
             minimo: 0,
             compra: 0,
-            salida: 0,
             ingreso: 0,
             categoria: '',
             descripcion: '',

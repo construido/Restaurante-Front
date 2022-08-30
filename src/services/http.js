@@ -15,7 +15,7 @@ export function http(){
         timeout: 5000
     });
 
-    /*intercertor.interceptors.response.use(
+    intercertor.interceptors.response.use(
         (response) => {
             return response;
         },
@@ -23,9 +23,12 @@ export function http(){
             console.log("******* INTERCEPTANDO ******");
             if(error.response.status === 401){
                 window.location.href = "/login"
+            }if (error.response.status === 422) {
+                // return error.response.data.errors
+                return error.response.status
             }
         }
-    )*/
+    )
 
     return intercertor;
 }

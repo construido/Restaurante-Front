@@ -18,8 +18,13 @@
                 {{formatCurrency(slotProps.data.Precio_Venta_P)}}
             </template>
         </Column>
-        <Column field="Stock" header="STOCK"  class="text-right"></Column>
+        <Column field="Stock" header="STOCK" class="text-right"></Column>
         <Column field="Categoria" header="CATEGORIA"></Column>
+        <Column header="IMAGEN">
+            <template #body="slotProps">
+                <img :src="slotProps.data.Foto_Producto" class="product-image"  style="width: 150px; display: block;">
+            </template>
+        </Column>
         <Column header="ESTADO">
             <template #body="slotProps">
                 <span v-if="slotProps.data.Estado_Producto" style="color: darkgreen"> <b> Activo </b> </span>

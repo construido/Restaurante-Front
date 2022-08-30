@@ -31,27 +31,6 @@
                 <label for="ingreso">Ingreso</label>
             </span>
         </div>
-        <div class="field col-12 md:col-4">
-            <span class="p-float-label">
-                <InputNumber id="salida" v-model="datosProducto.salida"/>
-                <label for="salida">Salida</label>
-            </span>
-        </div>
-        <div class="field col-12 md:col-4">
-            <span class="p-float-label">
-                <InputNumber id="stock" v-model="datosProducto.stock"/>
-                <label for="stock">Stock</label>
-            </span>
-        </div>
-    </div>
-
-    <div class="p-fluid grid my-2">
-        <div class="field col-12 md:col-4">
-            <span class="p-float-label">
-                <Textarea id="textarea" rows="5" v-model="datosProducto.descripcion"></Textarea>
-                <label for="textarea">Descripción</label>
-            </span>
-        </div>
         <div  class="field col-12 md:col-4">
             <span class="p-float-label">
                 <Dropdown v-model="datosProducto.categoria" optionValue="ID_Categoria" :options="arrayCategoriaSelect" optionLabel="Nombre_Categoria"/>
@@ -62,6 +41,15 @@
             <span class="p-float-label">
                 <InputNumber id="minimo" v-model="datosProducto.minimo"/>
                 <label for="minimo">Stock Mínimo</label>
+            </span>
+        </div>
+    </div>
+
+    <div class="p-fluid grid my-2">
+        <div class="field col-12 md:col-8">
+            <span class="p-float-label">
+                <Textarea id="textarea" rows="5" v-model="datosProducto.descripcion"></Textarea>
+                <label for="textarea">Descripción</label>
             </span>
         </div>
     </div>
@@ -85,11 +73,9 @@ export default {
         const datosProducto = ref({
             id: 0,
             venta: 0,
-            stock: 0,
             nombre: '',
             minimo: 0,
             compra: 0,
-            salida: 0,
             ingreso: 0,
             categoria: '',
             descripcion: '',
@@ -101,11 +87,9 @@ export default {
                 listar()
                 datosProducto.value.id = store.state.id
                 datosProducto.value.venta = store.state.venta
-                datosProducto.value.stock = store.state.stock
                 datosProducto.value.nombre = store.state.nombre
                 datosProducto.value.minimo = store.state.minimo
                 datosProducto.value.compra = store.state.compra
-                datosProducto.value.salida = store.state.salida
                 datosProducto.value.ingreso = store.state.ingreso
                 datosProducto.value.categoria = store.state.categoria
                 datosProducto.value.descripcion = store.state.descripcion

@@ -1,7 +1,7 @@
 import { http } from './http.js'
 
-export function listar() {
-    return http().get('verify/listarVentas')
+export function listar(params) {
+    return http().get('verify/listarVentas?page=' + (params.page + 1) + '&rows=' + params.rows)
 }
 
 export function listarDetalle(venta) {
@@ -10,8 +10,8 @@ export function listarDetalle(venta) {
 
 export function guardar(cliente, detalle, total) {
     return http().post('verify/guardarVenta', {
-        'Cliente': cliente.ID_Cliente,
         'Total': total,
+        'Cliente': cliente,
         'Productos': detalle
     })
 }

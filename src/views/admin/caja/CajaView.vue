@@ -7,7 +7,7 @@
             <template #start>
                 <Button label="Nueva Caja" icon="pi pi-external-link" @click="abrirModal()"></Button>
             </template>
-            <template #end>
+            <!--<template #end>
                 <div class="grcaja p-fluid">
                     <div class="col-12 md:col-12">
                         <div class="p-inputgroup">
@@ -16,14 +16,14 @@
                         </div>
                     </div>
                 </div>
-            </template>
+            </template>-->
         </Toolbar>
 
         <Dialog :header="header" v-model:visible="cajaModal" :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '50vw'}" :modal="true">
             <div class="p-fluid grid p-4">
                 <div v-if="btnCerrar != 2" class="field col-12 md:col-12">
                     <span class="p-float-label">
-                        <InputText id="inputtext" type="text" v-model="datosCaja.monto"/>
+                        <InputNumber id="inputtext" type="text" mode="currency" currency="BOB" locale="es-BO"  v-model="datosCaja.monto"/>
                         <label for="inputtext" autofocus>Monto</label>
                     </span>
                 </div>
@@ -154,10 +154,10 @@ export default {
 
         const arrayCaja = ref()
         const datosCaja = ref({
-            id: 0,
+            /*id: 0,
             tipo: '',
             monto: '',
-            observacion: ''
+            observacion: ''*/
         })
         const cajaModal  = ref(false)
         const abrirModal = () => {
@@ -257,10 +257,8 @@ export default {
         }
         function limpiarCampos(){
             btnCerrar.value = 1
-            datosCaja.value.tipo = ''
-            datosCaja.value.monto = ''
+            datosCaja.value = {}
             header.value = 'ABRIR CAJA'
-            datosCaja.value.observacion = ''
         }
         function obtenerDatos(caja, tipo){
             btnCerrar.value = 3
