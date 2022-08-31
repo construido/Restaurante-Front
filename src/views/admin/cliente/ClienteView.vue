@@ -8,9 +8,25 @@
             <template #start>
                 <ModalNuevo :listar="listar"></ModalNuevo>
             </template>
+            <template #end>
+                <div class="grcaja p-fluid">
+                    <div class="col-12 md:col-12">
+                        <div class="p-inputgroup">
+                            <InputText placeholder="filtrar por nombre..." v-model="filters"/>
+                            <Button icon="pi pi-search" class="p-button-primary p-button-outlined"
+                                v-tooltip.top="'Filtrar Clientes'" @click="listar()">
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            </template>
         </Toolbar>
         
-        <DataTable :value="arrayCliente" responsiveLayout="scroll" class="p-datatable-sm">
+        <DataTable :value="arrayCliente" responsiveLayout="scroll" class="p-datatable-sm"
+            ref="dt" :lazy="true" :rows="10" :paginator="true" :loading="loading" :totalRecords="totalRecords"
+            @page="onPage($event)" :rowsPerPageOptions="[5, 10, 20, 50, 100]"
+            paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
+            currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} Clientes">
             <Column field="ID_Cliente" header="#" class="text-right"></Column>
             <Column field="Nombre_Razon_Social_Cliente" header="RAZÓN SOCIAL"></Column>
             <Column field="CI_NIT_Cliente" header="CI / NIT" class="text-right"></Column>
@@ -50,8 +66,14 @@ export default {
     },
 
     setup(){
-        function message(){
-            console.log('Click desde el padre')
+        const dt = ref()
+        const filters = ref('')
+        const loading = ref(false)
+        const lazyParams = ref()
+        const totalRecords = ref(0)
+        const onPage = (event) => {
+            lazyParams.value = event
+            listar()
         }
         const toast = useToast()
         const confirm = useConfirm()
@@ -87,13 +109,25 @@ export default {
         }
 
         onMounted(() => {
+            lazyParams.value = {
+                first: 0,
+                rows: dt.value.rows,
+                sortField: null,
+                sortOrder: null,
+                page: 0
+            }
             listar()
         })
 
         function listar(){
-            cliente.listar()
+            cliente.listar(lazyParams.value, filters.value)
             .then(res => {
-                arrayCliente.value = res.data
+                loading.value = true
+                setTimeout(() => {
+                    arrayCliente.value = res.data.data
+                    totalRecords.value  = res.data.total
+                    loading.value = false
+                }, 2000)
             });
         }
         function eliminar(){
@@ -104,7 +138,12 @@ export default {
         }
 
         return{
-            message,
+            dt,
+            onPage,
+            loading,
+            filters,
+            totalRecords,
+
             listar,
             confirmar,
             arrayCliente

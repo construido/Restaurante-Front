@@ -4,7 +4,7 @@
 
     <Button label="Nuevo Cliente" icon="pi pi-external-link" @click="abrirModal"></Button>
 
-    <Dialog header="Nuevo Cliente" v-model:visible="categoriaModal" :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '50vw'}" :modal="true">
+    <Dialog header="Nuevo Cliente" v-model:visible="clienteModal" :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '50vw'}" :modal="true">
         <div class="p-fluid grid p-4">
             <div class="field col-12 md:col-6">
                 <span class="p-float-label">
@@ -56,37 +56,35 @@ export default {
 
     setup(props){
         const toast = useToast()
-        const datosCliente = ref({
-            nombre: '',
-            ci_nit: '',
-            correo: '',
-            telefono: '',
-        })
-        const categoriaModal = ref(false)
+        const datosCliente = ref({})
+        const clienteModal = ref(false)
         const abrirModal = () => {
-            categoriaModal.value = true;
+            clienteModal.value = true;
         }
         const cerrarModal = () => {
             limpiar()
-            categoriaModal.value = false;
+            clienteModal.value = false;
         }
-        function toastSuccess(){
-            toast.add({severity: 'success', summary: 'Cliente Registrado', detail: 'Registrado Correctamente', life: 3000})
+        function toastMessage(color, header, message){
+            toast.add({severity: color, summary: header, detail: message, life: 3000})
         }
 
         function limpiar(){
-            datosCliente.value.nombre = ''
-            datosCliente.value.ci_nit = ''
-            datosCliente.value.correo = ''
-            datosCliente.value.telefono = ''
+            datosCliente.value = {}
         }
         function guardar(){
             cliente.guardar(datosCliente.value)
             .then(res => {
-                toastSuccess()
-                cerrarModal()
-                limpiar()
-                props.listar()
+                if(res == 422){
+                    toastMessage('error', 'Error', 'Debe llenar todos los campos')
+                }else{
+                    toastMessage('success', 'Éxito', 'Guardado Correctamente')
+                    setTimeout(() => {
+                        cerrarModal()
+                        limpiar()
+                        props.listar()
+                    }, 2000)
+                }
             })
         }
 
@@ -95,7 +93,7 @@ export default {
 
             abrirModal,
             cerrarModal,
-            categoriaModal,
+            clienteModal,
 
             datosCliente
         }

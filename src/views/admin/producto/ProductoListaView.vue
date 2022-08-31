@@ -7,9 +7,25 @@
         <template #start>
             <Button label="Nuevo Producto" icon="pi pi-external-link" @click="$router.push('/producto/nuevo')"></Button>
         </template>
+        <template #end>
+            <div class="grcaja p-fluid">
+                <div class="col-12 md:col-12">
+                    <div class="p-inputgroup">
+                        <InputText placeholder="filtrar por nombre..." v-model="filters"/>
+                        <Button icon="pi pi-search" class="p-button-primary p-button-outlined"
+                            v-tooltip.top="'Filtrar Productos'" @click="listar()">
+                        </Button>
+                    </div>
+                </div>
+            </div>
+        </template>
     </Toolbar>
 
-    <DataTable :value="arrayProducto" responsiveLayout="scroll" class="p-datatable-sm">
+    <DataTable :value="arrayProducto" responsiveLayout="scroll" class="p-datatable-sm"
+            ref="dt" :lazy="true" :rows="10" :paginator="true" :loading="loading" :totalRecords="totalRecords"
+            @page="onPage($event)" :rowsPerPageOptions="[5, 10, 20, 50, 100]"
+            paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
+            currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} Productos">
         <Column field="ID_Producto" header="#" class="text-right"></Column>
         <Column field="Nombre_Producto" header="NOMBRE"></Column>
         <Column field="Descripcion_Producto" header="DESCRIPCIÓN"></Column>
@@ -33,11 +49,15 @@
         </Column>
         <Column :exportable="false" style="min-width:8rem" header="ACCIONES">
             <template #body="slotProps">
-                <Button icon="pi pi-pencil" title="Editar" class="p-button-rounded p-button-success mr-2" @click="cargarObjeto(slotProps.data)"></Button>
-                <Button v-if="slotProps.data.Estado_Producto" title="Desactivar" icon="pi pi-lock" 
+                <Button icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"
+                v-tooltip.top="'Editar Producto'" @click="cargarObjeto(slotProps.data)">
+                </Button>
+                <Button v-if="slotProps.data.Estado_Producto" v-tooltip.top="'Desactivar Producto'" icon="pi pi-lock" 
                     class="p-button-rounded p-button-danger mr-2" @click="confirmar(slotProps.data)">
                 </Button>
-                <Button v-else icon="pi pi-lock-open" title="Activar" class="p-button-rounded p-button-primary" @click="confirmar(slotProps.data)"></Button>
+                <Button v-else icon="pi pi-lock-open" v-tooltip.top="'Activar Producto'"
+                    class="p-button-rounded p-button-primary" @click="confirmar(slotProps.data)">
+                </Button>
             </template>
         </Column>
     </DataTable>
@@ -53,13 +73,19 @@ import store from '@/store'
 
 export default {
     setup(){
+        const dt = ref()
+        const filters = ref('')
+        const loading = ref(false)
+        const lazyParams = ref()
+        const totalRecords = ref(0)
+        const onPage = (event) => {
+            lazyParams.value = event
+            listar()
+        }
         const toast = useToast()
         const confirm = useConfirm()
         const arrayProducto = ref()
-        const datosProducto = ref({
-            id: 0,
-            estado: ''
-        })
+        const datosProducto = ref({})
 
         const confirmar = (producto) => {
             let headers = producto.Estado_Producto == 1 ? 'Desactivar producto' : 'Activar producto'
@@ -87,19 +113,32 @@ export default {
         }
 
         onMounted(() => {
+            lazyParams.value = {
+                first: 0,
+                rows: dt.value.rows,
+                sortField: null,
+                sortOrder: null,
+                page: 0
+            }
             store.dispatch('limpiarProducto')
             listar()
         })
 
         function listar(){
-            producto.listar()
+            producto.listar(lazyParams.value, filters.value)
             .then(res => {
-                arrayProducto.value = res.data
+                loading.value = true
+                setTimeout(() => {
+                    arrayProducto.value = res.data.data
+                    totalRecords.value  = res.data.total
+                    loading.value = false
+                }, 2000)
             })
         }
         function eliminar(){
             producto.eliminar(datosProducto.value)
             .then(res => {
+                datosProducto.value = {}
                 listar()
             });
         }
@@ -114,6 +153,13 @@ export default {
         }
 
         return{
+            dt,
+            onPage,
+            filters,
+            loading,
+            totalRecords,
+
+            listar,
             confirmar,
 
             cargarObjeto,

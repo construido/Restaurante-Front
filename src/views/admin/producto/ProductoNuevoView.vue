@@ -79,31 +79,27 @@ export default {
     setup(){
         const toast = useToast()
         const arrayCategoriaSelect = ref()
-        const datosProducto = ref({
-            venta: 0,
-            nombre: '',
-            minimo: 0,
-            compra: 0,
-            ingreso: 0,
-            categoria: '',
-            descripcion: '',
-        })
+        const datosProducto = ref({})
 
         onMounted(() => {
             store.dispatch('limpiarProducto')
             listar()
         })
 
-        function toastSuccess(){
-            toast.add({severity: 'success', summary: 'Producto Registrado', detail: 'Registrado Correctamente', life: 3000})
+        function toastMessage(color, header, message) {
+            toast.add({severity: color, summary: header, detail: message, life: 3000})
         }
         function guardar(){
             producto.guardar(datosProducto.value)
             .then(res => {
-                toastSuccess()
-                setTimeout(() => {
-                    router.push('/producto')
-                }, 3000)
+                if(res == 422){
+                    toastMessage('error', 'Error', 'Debe llenar todos los campos')
+                }else{
+                    toastMessage('success', 'Éxito', 'Guardado Correctamente')
+                    setTimeout(() => {
+                        router.push('/producto')
+                    }, 2000)
+                }
             })
         }
         function listar(){

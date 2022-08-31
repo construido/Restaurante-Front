@@ -70,16 +70,7 @@ export default {
     setup(){
         const toast = useToast()
         const arrayCategoriaSelect = ref()
-        const datosProducto = ref({
-            id: 0,
-            venta: 0,
-            nombre: '',
-            minimo: 0,
-            compra: 0,
-            ingreso: 0,
-            categoria: '',
-            descripcion: '',
-        })
+        const datosProducto = ref({})
 
         onMounted(() => {
             if(store.state.id == 0) router.go(-1)
@@ -96,8 +87,8 @@ export default {
             }
         })
 
-        function toastSuccess(){
-            toast.add({severity: 'success', summary: 'Producto Actualizado', detail: 'Actualizado Correctamente', life: 3000})
+        function toastMessage(color, header, message) {
+            toast.add({severity: color, summary: header, detail: message, life: 3000})
         }
         function listar(){
             categoria.listarSelect()
@@ -112,11 +103,15 @@ export default {
         function editar(){
             producto.editar(datosProducto.value)
             .then(res => {
-                toastSuccess()
-                setTimeout(() => {
-                    store.dispatch('limpiarProducto')
-                    router.push('/producto')
-                }, 3000)
+                if(res == 422){
+                    toastMessage('error', 'Error', 'Debe llenar todos los campos')
+                }else{
+                    toastMessage('success', 'Éxito', 'Actualizado Correctamente')
+                    setTimeout(() => {
+                        store.dispatch('limpiarProducto')
+                        router.push('/producto')
+                    }, 2000)
+                }
             })
         }
 

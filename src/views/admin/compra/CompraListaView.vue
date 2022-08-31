@@ -9,7 +9,10 @@
         </template>
     </Toolbar>
 
-    <DataTable :value="arrayCompra" responsiveLayout="scroll" class="p-datatable-sm" style="white-space:nowrap">
+    <DataTable :value="arrayCompra" responsiveLayout="scroll" class="p-datatable-sm" style="white-space:nowrap"
+        ref="dt" :lazy="true" :rows="10" :paginator="true" :loading="loading" :totalRecords="totalRecords" @page="onPage($event)"
+        paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
+        :rowsPerPageOptions="[5, 10, 20, 50, 100]" currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} Compras">
         <Column field="ID_Compra" header="#" class="text-right"></Column>
         <Column header="FECHA" class="text-right">
             <template #body="slotProps">
@@ -44,8 +47,6 @@
 <script>
 import ModalDetalle from "@/components/compra/ModalDetalle.vue"
 import * as compra from "@/services/compra.service"
-import { useConfirm } from "primevue/useconfirm"
-import { useToast } from "primevue/usetoast"
 import { ref, onMounted } from "vue"
 import moment from 'moment';
 
@@ -55,47 +56,39 @@ export default {
     },
 
     setup(){
-        const toast = useToast()
-        const confirm = useConfirm()
         const arrayCompra = ref()
-        const datosCompra = ref({
-            id: 0,
-            estado: ''
-        })
 
-        const confirmar = (producto) => {
-            let headers = producto.Estado_Producto == 1 ? 'Desactivar producto' : 'Activar producto'
-            let icons   = producto.Estado_Producto == 1 ? 'pi pi-info-circle' : 'pi pi-exclamation-triangle'
-            let button  = producto.Estado_Producto == 1 ? 'p-button-danger' : 'p-button-primary'
-            let detalle = producto.Estado_Producto == 1 ? 'Producto desactivado' : 'Producto activado'
-            datosCompra.value.id     = producto.ID_Producto
-            datosCompra.value.estado = producto.Estado_Producto
-
-            confirm.require({
-                message: 'Estás seguro de continuar?',
-                header: headers,
-                icon: icons,
-                acceptClass: button,
-                accept: () => {
-                    eliminar()
-                    toast.add({severity:'info', summary:'Confirmado', detail: detalle, life: 3000});
-                    confirm.close()
-                },
-                reject: () => {
-                    toast.add({severity:'error', summary:'Rechazado', detail:'Has rechazado', life: 3000});
-                    confirm.close()
-                }
-            });
+        const dt = ref()
+        const loading = ref(false)
+        const lazyParams = ref()
+        const totalRecords = ref(0)
+        const onPage = (event) => {
+            lazyParams.value = event
+            listar()
         }
 
         onMounted(() => {
+            loading.value = true
+            lazyParams.value = {
+                first: 0,
+                rows: dt.value.rows,
+                sortField: null,
+                sortOrder: null,
+                page: 0
+            }
             listar()
         })
 
         function listar(){
-            compra.listar()
+            compra.listar(lazyParams.value)
             .then(res => {
-                arrayCompra.value = res.data
+                loading.value
+                console.log(res)
+                setTimeout(() => {
+                    totalRecords.value  = res.data.total
+                    arrayCompra.value = res.data.data
+                    loading.value = false
+                }, 2000)
             })
         }
         const formatCurrency = (value) => {
@@ -110,7 +103,10 @@ export default {
         }
 
         return{
-            confirmar,
+            dt,
+            onPage,
+            loading,
+            totalRecords,
 
             arrayCompra,
             formatDate,

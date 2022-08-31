@@ -118,19 +118,10 @@ export default {
         const total_compra = ref(0)
         const buscar = ref('')
         const toast = useToast()
-        const datosProducto = ref({
-            id: 0,
-            stock: 0,
-            precio: 0,
-            producto: '',
-            cantidad: '',
-            categoria: '',         
-        })
+        const datosProducto = ref({})
         const arrayDetalle = ref([])
         const formatCurrency = (value) => {
-            if(value)
-				return value.toLocaleString('es-BO', {style: 'currency', currency: 'BOB'});
-			return;
+            return value.toLocaleString('es-BO', {style: 'currency', currency: 'BOB'});
         }
 
         onMounted(() => {
@@ -166,15 +157,21 @@ export default {
             })
         }
         function llenarDetalle(){
-            arrayDetalle.value.push({
-                ID: datosProducto.value.id,
-                Precio: datosProducto.value.precio,
-                Producto: datosProducto.value.producto,
-                Cantidad: datosProducto.value.cantidad,
-                Sub_Total: datosProducto.value.precio * datosProducto.value.cantidad
-            })
+            if(datosProducto.value.id && datosProducto.value.cantidad){
+                arrayDetalle.value.push({
+                    ID: datosProducto.value.id,
+                    Precio: datosProducto.value.precio,
+                    Producto: datosProducto.value.producto,
+                    Cantidad: datosProducto.value.cantidad,
+                    Sub_Total: datosProducto.value.precio * datosProducto.value.cantidad
+                })
 
-            total_compra.value = total_compra.value + (datosProducto.value.precio * datosProducto.value.cantidad)
+                total_compra.value = total_compra.value + (datosProducto.value.precio * datosProducto.value.cantidad)
+                datosProducto.value = {}
+                buscar.value = ''
+            }else{
+                toastMessage('error', 'Error', 'Debe llenar todos los campos')
+            }
         }
         function eliminar(index){
             total_compra.value = total_compra.value - arrayDetalle.value[index].Sub_Total
@@ -183,10 +180,14 @@ export default {
         function guardar(){
             compra.guardar(datosProveedor.value, arrayDetalle.value, total_compra.value)
             .then(res => {
-                toastMessage('success', 'Éxito', 'Guardado Correctamente')
-                setTimeout(() => {
-                    router.go(-1)
-                }, 2000)
+                if(res == 422){
+                    toastMessage('error', 'Error', 'Debe llenar todos los campos')
+                }else{
+                    toastMessage('success', 'Éxito', 'Guardado Correctamente')
+                    setTimeout(() => {
+                        router.go(-1)
+                    }, 2000)
+                }
             })
         }
         function toastMessage(color, header, message){

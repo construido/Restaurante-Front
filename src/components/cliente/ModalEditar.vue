@@ -4,7 +4,7 @@
 
     <Button icon="pi pi-pencil" title="Editar" class="p-button-rounded p-button-success mr-2" @click="abrirModal"></Button>
 
-    <Dialog header="Actualizar Cliente" v-model:visible="categoriaModal" :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '50vw'}" :modal="true">
+    <Dialog header="Actualizar Cliente" v-model:visible="clienteModal" :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '50vw'}" :modal="true">
         <div class="p-fluid grid p-4">
             <div class="field col-12 md:col-6">
                 <span class="p-float-label">
@@ -65,30 +65,28 @@ export default {
             nombre:   props.cliente.Nombre_Razon_Social_Cliente
         })
 
-        const categoriaModal = ref(false)
+        const clienteModal = ref(false)
         const abrirModal = () => {
-            categoriaModal.value = true;
+            clienteModal.value = true;
         }
         const cerrarModal = () => {
-            limpiar()
-            categoriaModal.value = false;
+            clienteModal.value = false;
         }
-        function toastSuccess(){
-            toast.add({severity: 'success', summary: 'Cliente Registrado', detail: 'Registrado Correctamente', life: 3000})
-        }
-
-        function limpiar(){
-            datosCliente.value.nombre = ''
-            datosCliente.value.ci_nit = ''
-            datosCliente.value.correo = ''
-            datosCliente.value.telefono = ''
+        function toastMessage(color, header, message){
+            toast.add({severity: color, summary: header, detail: message, life: 3000})
         }
         function eliminar(){
             cliente.editar(datosCliente.value)
             .then(res => {
-                toastSuccess()
-                cerrarModal()
-                emit("listar")
+                if(res == 422){
+                    toastMessage('error', 'Error', 'Debe llenar todos los campos')
+                }else{
+                    toastMessage('success', 'Éxito', 'Actualizado Correctamente')
+                    setTimeout(() => {
+                        cerrarModal()
+                        emit("listar")
+                    }, 2000)
+                }
             })
         }
         return {
@@ -98,7 +96,7 @@ export default {
 
             abrirModal,
             cerrarModal,
-            categoriaModal
+            clienteModal
             
         }
     }

@@ -153,12 +153,7 @@ export default {
         }
 
         const arrayCaja = ref()
-        const datosCaja = ref({
-            /*id: 0,
-            tipo: '',
-            monto: '',
-            observacion: ''*/
-        })
+        const datosCaja = ref({})
         const cajaModal  = ref(false)
         const abrirModal = () => {
             cajaModal.value = true;
@@ -270,10 +265,16 @@ export default {
         function ingresoSalida(){
             caja.ingresoSalida(datosCaja.value)
             .then(res => {
-                limpiarCampos()
-                cerrarModal()
-                toastMessage('info', 'Éxito', 'Actualizado Correctamente')
-                listar()
+                if(res == 422){
+                    toastMessage('error', 'Error', 'Los campos son obligatorios')
+                }else{
+                    toastMessage('info', 'Éxito', 'Actualizado Correctamente')
+                    setTimeout(() => {
+                        limpiarCampos()
+                        cerrarModal()
+                        listar()
+                    }, 2000)
+                }
             })
         }
 
