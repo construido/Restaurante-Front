@@ -72,16 +72,22 @@ export default {
         const cerrarModal = () => {
             proveedorModal.value = false;
         }
-        function toastSuccess(){
-            toast.add({severity: 'success', summary: 'Proveedor Registrado', detail: 'Registrado Correctamente', life: 3000})
+        function toastMessage(color, header, message){
+            toast.add({severity: color, summary: header, detail: message, life: 3000})
         }
 
         function editar(){
             proveedor.editar(datosProveedor.value)
             .then(res => {
-                toastSuccess()
-                cerrarModal()
-                emit("listar")
+                if(res == 422){
+                    toastMessage('error', 'Error', 'Campos vacíos o correo no válido')
+                }else{
+                    toastMessage('success', 'Éxito', 'Actualizado Correctamente')
+                    setTimeout(() => {
+                        cerrarModal()
+                        emit("listar")
+                    }, 2000)
+                }
             })
         }
         return {

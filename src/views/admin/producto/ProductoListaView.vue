@@ -8,7 +8,7 @@
             <Button label="Nuevo Producto" icon="pi pi-external-link" @click="$router.push('/producto/nuevo')"></Button>
         </template>
         <template #end>
-            <div class="grcaja p-fluid">
+            <div class="p-fluid">
                 <div class="col-12 md:col-12">
                     <div class="p-inputgroup">
                         <InputText placeholder="filtrar por nombre..." v-model="filters"/>

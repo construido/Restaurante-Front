@@ -42,6 +42,7 @@ export default {
             try {
                 const { data } = await authService.login(this.credenciales)
                 localStorage.setItem('token', data.token.token)
+                console.log(data)
                 this.$router.push('/')
             } catch (error) {
                 console.log("******************* vista: ", error.message)

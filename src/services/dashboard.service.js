@@ -15,3 +15,11 @@ export function listarCompras() {
 export function listarVentas() {
     return http().post('verify/cantidadVentas')
 }
+
+export function porcentajeProductos() {
+    return http().post('verify/porcentajeProductos')
+}
+
+export function productoStock() {
+    return http().post('verify/productoStock')
+}

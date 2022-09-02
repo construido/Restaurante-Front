@@ -8,9 +8,25 @@
             <template #start>
                 <ModalNuevo :listar="listar"></ModalNuevo>
             </template>
+            <template #end>
+                <div class="grcaja p-fluid">
+                    <div class="col-12 md:col-12">
+                        <div class="p-inputgroup">
+                            <InputText placeholder="filtrar por nombre..." v-model="filters"/>
+                            <Button icon="pi pi-search" class="p-button-primary p-button-outlined"
+                                v-tooltip.top="'Filtrar proveedores'" @click="listar()">
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            </template>
         </Toolbar>
         
-        <DataTable :value="arrayProveedor" responsiveLayout="scroll" class="p-datatable-sm">
+        <DataTable :value="arrayProveedor" responsiveLayout="scroll" class="p-datatable-sm"
+            ref="dt" :lazy="true" :rows="10" :paginator="true" :loading="loading" :totalRecords="totalRecords"
+            @page="onPage($event)" :rowsPerPageOptions="[5, 10, 20, 50, 100]"
+            paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
+            currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} Proveedores">
             <Column field="ID_Proveedor" header="#" class="text-right"></Column>
             <Column field="Nombre_Razon_Social_Proveedor" header="RAZÓN SOCIAL"></Column>
             <Column field="CI_NIT_Proveedor" header="CI / NIT" class="text-right"></Column>
@@ -47,20 +63,47 @@ export default {
     },
 
     setup(){
+        const dt = ref()
+        const filters = ref('')
+        const loading = ref(false)
+        const lazyParams = ref()
+        const totalRecords = ref(0)
+        const onPage = (event) => {
+            lazyParams.value = event
+            listar()
+        }
         const arrayProveedor = ref()
 
         onMounted(() => {
+            lazyParams.value = {
+                first: 0,
+                rows: dt.value.rows,
+                sortField: null,
+                sortOrder: null,
+                page: 0
+            }
             listar()
         })
 
         function listar(){
-            proveedor.listar()
+            proveedor.listar(lazyParams.value, filters.value)
             .then(res => {
-                arrayProveedor.value = res.data
+                loading.value = true
+                setTimeout(() => {
+                    arrayProveedor.value = res.data.data
+                    totalRecords.value  = res.data.total
+                    loading.value = false
+                }, 2000)
             });
         }
 
         return{
+            dt,
+            onPage,
+            filters,
+            loading,
+            totalRecords,
+
             listar,
             arrayProveedor
         }

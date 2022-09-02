@@ -62,77 +62,19 @@
 		</div>
 
         <div class="col-12 xl:col-6">
-            <!--<div class="card">
-                <h5>VENTAS RECIENTES</h5>
-                <DataTable :value="products" :rows="5" :paginator="true" responsiveLayout="scroll">
-                    <Column style="width:15%">
-                        <template #header>
-                            Image
-                        </template>
-                        <template #body="slotProps">
-                            <img :src="'images/product/' + slotProps.data.image" :alt="slotProps.data.image" width="50" class="shadow-2" />
-                        </template>
-                    </Column>
-                    <Column field="name" header="Name" :sortable="true" style="width:35%"></Column>
-                    <Column field="price" header="Price" :sortable="true" style="width:35%">
-                        <template #body="slotProps">
-                            {{formatCurrency(slotProps.data.price)}}
-                        </template>
-                    </Column>
-                    <Column style="width:15%">
-                        <template #header>
-                            View
-                        </template>
-                        <template #body>
-                            <Button icon="pi pi-search" type="button" class="p-button-text"></Button>
-                        </template>
-                    </Column>
-                </DataTable>
-            </div>-->
-
-            <div class="card">
-                <div class="flex justify-content-between align-items-center mb-5">
-                    <h5>PRODUCTOS MÁS VENDIDOS</h5>
-                    <div>
-                        <Button icon="pi pi-ellipsis-v" class="p-button-text p-button-plain p-button-rounded" @click="$refs.menu2.toggle($event)"></Button>
-                        <Menu ref="menu2" :popup="true" :model="items"></Menu>
-                    </div>
-                </div>
-                <ul class="list-none p-0 m-0">
+            <div class="card mb-0">
+                <h5><b>MÁS VENDIDOS</b></h5>
+                <ul class="list-none p-0 m-0" v-for="(producto, index) of productosVendidos" :key="producto.index">
                     <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
                         <div>
-                            <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Yogurt</span>
-                            <div class="mt-1 text-600">Lácteos</div>
+                            <span class="text-900 font-medium mr-2 mb-1 md:mb-0">{{ producto.Nombre_Producto }}</span>
+                            <div class="mt-1 text-600">{{ producto.Nombre_Categoria }}</div>
                         </div>
                         <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
                             <div class="surface-300 border-round overflow-hidden w-10rem lg:w-6rem" style="height:8px">
-                                <div class="bg-green-500 h-full" style="width:35%"></div>
+                                <div :class="color[index] + ' h-full'" :style="'width:' + producto.Porcentaje"></div>
                             </div>
-                            <span class="text-green-500 ml-3 font-medium">%35</span>
-                        </div>
-                    </li>
-                    <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-                        <div>
-                            <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Leche Saborizada</span>
-                            <div class="mt-1 text-600">Lácteos</div>
-                        </div>
-                        <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
-                            <div class="surface-300 border-round overflow-hidden w-10rem lg:w-6rem" style="height:8px">
-                                <div class="bg-purple-500 h-full" style="width:75%"></div>
-                            </div>
-                            <span class="text-purple-500 ml-3 font-medium">%75</span>
-                        </div>
-                    </li>
-                    <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-                        <div>
-                            <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Cocla Cola 3lt</span>
-                            <div class="mt-1 text-600">Gaseosas</div>
-                        </div>
-                        <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
-                            <div class="surface-300 border-round overflow-hidden w-10rem lg:w-6rem" style="height:8px">
-                                <div class="bg-teal-500 h-full" style="width:40%"></div>
-                            </div>
-                            <span class="text-teal-500 ml-3 font-medium">%40</span>
+                            <span :class="text[index] + ' ml-3 font-medium'">{{ producto.Porcentaje }}</span>
                         </div>
                     </li>
                 </ul>
@@ -140,12 +82,15 @@
         </div>
 
         <div class="col-12 xl:col-6">
-            <div class="card">
-                <h5>RESUMEN DE VENTAS</h5>
-                <Chart type="line" :data="lineData" :options="lineOptions"/>
+            <div class="card mb-0">
+                <h5><b>STOCK MÍNIMO</b></h5>
+                <DataTable :value="arrayStock" class="p-datatable-sm" responsiveLayout="scroll">
+                    <Column field="Nombre_Producto" header="PRODUCTO"></Column>
+                    <Column field="Nombre_Categoria" header="CATEGORIA"></Column>
+                    <Column field="Stock" header="STOCK" class="text-right"></Column>
+                </DataTable>
             </div>
         </div>
-
 	</div>
 </template>
 
@@ -155,6 +100,8 @@ import { ref, onMounted } from "vue"
 
 export default {
     setup(){
+        const arrayStock = ref([])
+        const productosVendidos = ref()
         const productos = ref()
         const clientes = ref()
         const compras = ref({
@@ -166,18 +113,40 @@ export default {
             venta: 0
         })
         const formatCurrency = (value) => {
-            //if(value)
-                return value.toLocaleString('es-BO', {style: 'currency', currency: 'BOB'});
-			//return;
+            return value.toLocaleString('es-BO', {style: 'currency', currency: 'BOB'});
         }
-
+        const color = ref([
+            'bg-cyan-500',
+            'bg-teal-500',
+            'bg-green-500'
+        ])
+        const text = ref([
+            'text-cyan-500',
+            'text-teal-500',
+            'text-green-500'
+        ])
+        
         onMounted(() => {
+            porcentajeProductos()
             listarProductos()
             listarClientes()
             listarCompras()
+            productoStock()
             listarVentas()
         })
 
+        function productoStock(){
+            dashboard.productoStock()
+            .then(res => {
+                arrayStock.value = res.data
+            })
+        }
+        function porcentajeProductos(){
+            dashboard.porcentajeProductos()
+            .then(res => {
+                productosVendidos.value = res.data
+            })
+        }
         function listarProductos(){
             dashboard.listarProductos()
             .then(res => {
@@ -205,38 +174,17 @@ export default {
             })
         }
 
-        const lineData = ref({
-            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-            datasets: [
-                {
-                    label: 'Compras',
-                    data: [65, 59, 80, 81, 56, 55, 40],
-                    fill: false,
-                    backgroundColor: '#2f4860',
-                    borderColor: '#2f4860',
-                    tension: 0.4
-                },
-                {
-                    label: 'Ventas',
-                    data: [28, 48, 40, 19, 86, 27, 90],
-                    fill: false,
-                    backgroundColor: '#00bb7e',
-                    borderColor: '#00bb7e',
-                    tension: 0.4
-                }
-            ]
-        })
-        const lineOptions = ref(null)
-
         return {
+            text,
+            color,
+
             ventas,
             compras,
             clientes,
             productos,
             formatCurrency,
-
-            lineData,
-            lineOptions
+            productosVendidos,
+            arrayStock,
         }
     }
 }

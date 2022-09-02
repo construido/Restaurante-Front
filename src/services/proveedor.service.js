@@ -1,7 +1,7 @@
 import { http } from './http.js'
 
-export function listar() {
-    return http().get('verify/listarProveedores')
+export function listar(params, filters) {
+    return http().get('verify/listarProveedores?page=' + (params.page + 1) + '&rows=' + params.rows+ '&filters=' + filters)
 }
 
 export function listarSelect() {

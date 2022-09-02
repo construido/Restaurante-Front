@@ -56,37 +56,30 @@ export default {
 
     setup(props){
         const toast = useToast()
-        const datosProveedor = ref({
-            nombre: '',
-            ci_nit: '',
-            correo: '',
-            telefono: '',
-        })
+        const datosProveedor = ref({})
         const proveedorModal = ref(false)
         const abrirModal = () => {
             proveedorModal.value = true;
         }
         const cerrarModal = () => {
-            limpiar()
             proveedorModal.value = false;
         }
-        function toastSuccess(){
-            toast.add({severity: 'success', summary: 'Proveedor Registrado', detail: 'Registrado Correctamente', life: 3000})
-        }
-
-        function limpiar(){
-            datosProveedor.value.nombre = ''
-            datosProveedor.value.ci_nit = ''
-            datosProveedor.value.correo = ''
-            datosProveedor.value.telefono = ''
+        function toastMessage(color, header, message){
+            toast.add({severity: color, summary: header, detail: message, life: 3000})
         }
         function guardar(){
             proveedor.guardar(datosProveedor.value)
             .then(res => {
-                toastSuccess()
-                cerrarModal()
-                limpiar()
-                props.listar()
+                if(res == 422){
+                    toastMessage('error', 'Error', 'Campos vacíos o correo no válido')
+                }else{
+                    toastMessage('success', 'Éxito', 'Guardado Correctamente')
+                    setTimeout(() => {
+                        datosProveedor.value = {}
+                        cerrarModal()
+                        props.listar()
+                    }, 2000)
+                }
             })
         }
 
