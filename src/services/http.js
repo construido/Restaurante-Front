@@ -1,6 +1,7 @@
 import axios from "axios"
 
-export const urlBase = "http://192.168.100.2:8000/api/";
+export const urlBase = "http://192.168.100.2:8000/api/"
+//export const urlBase = "http://192.168.100.10:8080/api/"
 
 export function http(){
     const intercertor = axios.create({

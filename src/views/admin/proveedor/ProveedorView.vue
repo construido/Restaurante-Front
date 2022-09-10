@@ -1,9 +1,5 @@
 <template>
     <div class="card">
-
-        <Toast/>
-        <ConfirmDialog></ConfirmDialog>
-
         <Toolbar class="mb-4">
             <template #start>
                 <ModalNuevo :listar="listar"></ModalNuevo>
@@ -27,7 +23,11 @@
             @page="onPage($event)" :rowsPerPageOptions="[5, 10, 20, 50, 100]"
             paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
             currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} Proveedores">
-            <Column field="ID_Proveedor" header="#" class="text-right"></Column>
+            <Column header="#" class="text-right">
+                <template #body="slotProps">
+                    {{ slotProps.index + 1}}
+                </template>
+            </Column>
             <Column field="Nombre_Razon_Social_Proveedor" header="RAZÓN SOCIAL"></Column>
             <Column field="CI_NIT_Proveedor" header="CI / NIT" class="text-right"></Column>
             <Column field="Telefono_Proveedor" header="TELEFONO"  class="text-right"></Column>

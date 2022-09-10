@@ -5,7 +5,7 @@ export function listar(params, filters) {
 }
 
 export function buscar(buscar) {
-    return http().get('verify/buscarProducto?Nombre='+buscar)
+    return http().get('verify/buscarProducto?Codigo='+buscar)
 }
 
 export function guardar(producto) {
@@ -14,6 +14,7 @@ export function guardar(producto) {
         'Compra': producto.compra,
         'Nombre': producto.nombre,
         'Minimo': producto.minimo,
+        'Codigo': producto.codigo,
         'Ingreso': producto.ingreso,
         'Categoria': producto.categoria,
         'Descripcion': producto.descripcion,
@@ -29,6 +30,7 @@ export function editar(producto) {
         'Salida': producto.salida,
         'Nombre': producto.nombre,
         'Minimo': producto.minimo,
+        'Codigo': producto.codigo,
         'Ingreso': producto.ingreso,
         'Categoria': producto.categoria,
         'Descripcion': producto.descripcion

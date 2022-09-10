@@ -4,19 +4,25 @@
     <Toast/>
 
     <div class="p-fluid grid my-4">
-        <div class="field col-12 md:col-4">
+        <div class="field col-12 md:col-3">
             <span class="p-float-label">
-                <InputText id="producto" type="text" v-model="datosProducto.nombre"/>
+                <InputText id="codigo" type="text" v-model="datosProducto.codigo" style="text-transform: uppercase"/>
+                <label for="codigo">Código</label>
+            </span>
+        </div>
+        <div class="field col-12 md:col-3">
+            <span class="p-float-label">
+                <InputText id="producto" type="text" v-model="datosProducto.nombre" style="text-transform: uppercase"/>
                 <label for="producto">Producto</label>
             </span>
         </div>
-        <div class="field col-12 md:col-4">
+        <div class="field col-12 md:col-3">
             <span class="p-float-label">
                 <InputNumber id="compra" type="text" mode="currency" currency="BOB" locale="es-BO" v-model="datosProducto.compra"/>
                 <label for="compra">Precio Compra</label>
             </span>
         </div>
-        <div class="field col-12 md:col-4">
+        <div class="field col-12 md:col-3">
             <span class="p-float-label">
                 <InputNumber id="venta" type="text" mode="currency" currency="BOB" locale="es-BO" v-model="datosProducto.venta"/>
                 <label for="venta">Precio Venta</label>
@@ -48,7 +54,7 @@
     <div class="p-fluid grid my-2">
         <div class="field col-12 md:col-8">
             <span class="p-float-label">
-                <Textarea id="textarea" rows="5" v-model="datosProducto.descripcion"></Textarea>
+                <Textarea id="textarea" rows="5" v-model="datosProducto.descripcion" style="text-transform: uppercase"></Textarea>
                 <label for="textarea">Descripción</label>
             </span>
         </div>
@@ -81,6 +87,7 @@ export default {
                 datosProducto.value.nombre = store.state.nombre
                 datosProducto.value.minimo = store.state.minimo
                 datosProducto.value.compra = store.state.compra
+                datosProducto.value.codigo = store.state.codigo
                 datosProducto.value.ingreso = store.state.ingreso
                 datosProducto.value.categoria = store.state.categoria
                 datosProducto.value.descripcion = store.state.descripcion

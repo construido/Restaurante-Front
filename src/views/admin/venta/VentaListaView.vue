@@ -13,7 +13,11 @@
         ref="dt" :lazy="true" :rows="10" :paginator="true" :loading="loading" :totalRecords="totalRecords" @page="onPage($event)"
         paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
         :rowsPerPageOptions="[5, 10, 20, 50, 100]" currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} Ventas">
-        <Column field="ID_Venta" header="#" class="text-right"></Column>
+        <Column header="#" class="text-right">
+            <template #body="slotProps">
+                {{ slotProps.index + 1 }}
+            </template>
+        </Column>
         <Column header="FECHA"  class="text-right">
             <template #body="slotProps">
                 {{formatDate(slotProps.data.Fecha_Venta)}}

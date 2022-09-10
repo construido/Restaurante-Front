@@ -1,7 +1,6 @@
 <template>
 
     <Toast/>
-    <ConfirmDialog></ConfirmDialog>
 
     <Toolbar class="mb-4">
         <template #start>
@@ -26,7 +25,12 @@
             @page="onPage($event)" :rowsPerPageOptions="[5, 10, 20, 50, 100]"
             paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
             currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} Productos">
-        <Column field="ID_Producto" header="#" class="text-right"></Column>
+        <Column header="#" class="text-right">
+            <template #body="slotProps">
+                {{ slotProps.index + 1 }}
+            </template>
+        </Column>
+        <Column field="Codigo_Producto" header="CÓDIGO"></Column>
         <Column field="Nombre_Producto" header="NOMBRE"></Column>
         <Column field="Descripcion_Producto" header="DESCRIPCIÓN"></Column>
         <Column header="PRECIO"  class="text-right">

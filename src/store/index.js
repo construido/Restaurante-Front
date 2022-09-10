@@ -13,6 +13,7 @@ export default createStore({
     nombre: '',
     minimo: 0,
     compra: 0,
+    codigo: '',
     ingreso: 0,
     categoria: '',
     descripcion: '',
@@ -39,6 +40,7 @@ export default createStore({
       state.nombre      = producto.Nombre_Producto
       state.minimo      = producto.Stock_Minimo
       state.compra      = producto.Precio_Compra_P
+      state.codigo      = producto.Codigo_Producto
       state.ingreso     = producto.Ingreso_Producto
       state.categoria   = producto.ID_Categoria
       state.descripcion = producto.Descripcion_Producto
@@ -49,6 +51,7 @@ export default createStore({
       state.nombre      = ''
       state.minimo      = 0
       state.compra      = 0
+      state.codigo      = ''
       state.ingreso     = 0
       state.categoria   = ''
       state.descripcion = ''

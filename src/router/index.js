@@ -86,6 +86,11 @@ const routes = [
         component: () => import(/* webpackChunkName: "producto" */ '../views/admin/proveedor/ProveedorView.vue')
       },
       {
+        path: '/inventario',
+        name: 'inventario',
+        component: () => import(/* webpackChunkName: "producto" */ '../views/admin/inventario/ListaView.vue')
+      },
+      {
         path: '/home',
         name: 'home',
         component: HomeView

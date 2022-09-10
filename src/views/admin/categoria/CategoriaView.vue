@@ -26,14 +26,14 @@
         <div v-else class="p-fluid grid p-4">
             <div class="field col-12 md:col-12">
                 <span class="p-float-label">
-                    <InputText id="inputtext" type="text" v-model="datosCategoria.nombre"/>
+                    <InputText id="inputtext" type="text" v-model="datosCategoria.nombre" style="text-transform: uppercase"/>
                     <label for="inputtext" autofocus>Nombre</label>
                 </span>
             </div>
 
             <div class="field col-12 md:col-12">
                 <span class="p-float-label">
-                    <Textarea id="textarea" v-model="datosCategoria.descripcion" rows="3"></Textarea>
+                    <Textarea id="textarea" v-model="datosCategoria.descripcion" rows="3" style="text-transform: uppercase"></Textarea>
                     <label for="textarea">Descripción</label>
                 </span>
             </div>
@@ -55,7 +55,11 @@
         class="p-datatable-sm" responsiveLayout="scroll" @page="onPage($event)" @sort="onSort($event)"
         paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
         :rowsPerPageOptions="[5, 10, 20, 50, 100]" currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} Categorias">
-        <Column field="ID_Categoria" header="#" class="text-right"></Column>
+        <Column header="#" class="text-right">
+            <template #body="slotProps">
+                {{ slotProps.index + 1 }}
+            </template>
+        </Column>
         <Column field="Nombre_Categoria" header="NOMBRE"></Column>
         <Column field="Descripcion_Categoria" header="DESCRIPCIÓN"></Column>
         <Column header="ESTADO">

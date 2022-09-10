@@ -1,7 +1,6 @@
 <template>
 
     <Toast/>
-    <ConfirmDialog></ConfirmDialog>
 
     <Button v-if="datosProveedor.estado == 1" title="Desactivar" icon="pi pi-lock"
         class="p-button-rounded p-button-danger mr-2" @click="confirmar()">
@@ -50,7 +49,7 @@ export default {
                     confirm.close()
                 },
                 reject: () => {
-                    toast.add({severity:'error', summary:'Rechazado', detail:'Has rechazado', life: 3000});
+                    //toast.add({severity:'error', summary:'Rechazado', detail:'Has rechazado', life: 3000});
                     confirm.close()
                 }
             });

@@ -50,7 +50,11 @@
             :loading="loading" :totalRecords="totalRecords" @page="onPage($event)" @sort="onSort($event)"
             paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
             :rowsPerPageOptions="[5, 10, 20, 50, 100]" currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} Cajas">
-            <Column field="ID_Caja" header="#" class="text-right"></Column>
+            <Column header="#" class="text-right">
+                <template #body="slotProps">
+                    {{ slotProps.index + 1 }}
+                </template>
+            </Column>
             <Column header="APERTURA" class="text-right" style="white-space:nowrap">
                 <template #body="slotProps">
                     {{formatDate(slotProps.data.Fecha_Apertura)}}

@@ -8,7 +8,7 @@
         <div class="p-fluid grid p-4">
             <div class="field col-12 md:col-6">
                 <span class="p-float-label">
-                    <InputText id="nombre" type="text" v-model="datosCliente.nombre"/>
+                    <InputText id="nombre" type="text" v-model="datosCliente.nombre" style="text-transform: uppercase"/>
                     <label for="nombre" autofocus>Nombre o Razón Social</label>
                 </span>
             </div>
@@ -29,7 +29,7 @@
             </div>
             <div class="field col-12 md:col-6">
                 <span class="p-float-label">
-                    <InputText id="correo" type="text" v-model="datosCliente.correo"/>
+                    <InputText id="correo" type="text" v-model="datosCliente.correo" style="text-transform: uppercase"/>
                     <label for="correo" autofocus>Correo</label>
                 </span>
             </div>
