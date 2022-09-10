@@ -12,5 +12,6 @@ export async function logout() {
     setTimeout(() => {
         window.location.href = "/login"
         localStorage.removeItem('token')
+        localStorage.removeItem('estado')
     }, 2000)
 }

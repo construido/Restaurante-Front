@@ -60,8 +60,8 @@ export default {
                             label: 'Inventario', icon: 'pi pi-fw pi-book',
                             items: [
                                 {label: 'Todo', icon: 'pi pi-fw pi-shopping-cart', to: '/inventario'},
-                                {label: 'Salida', icon: 'pi pi-fw pi-upload'},
-                                {label: 'Entrada', icon: 'pi pi-fw pi-download'},
+                                {label: 'Salida', icon: 'pi pi-fw pi-upload', to: '/salida'},
+                                {label: 'Entrada', icon: 'pi pi-fw pi-download', to: '/entrada'},
                             ]
                         },
                         {

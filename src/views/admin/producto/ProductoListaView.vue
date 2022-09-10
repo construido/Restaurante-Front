@@ -10,9 +10,12 @@
             <div class="p-fluid">
                 <div class="col-12 md:col-12">
                     <div class="p-inputgroup">
-                        <InputText placeholder="filtrar por nombre..." v-model="filters"/>
+                        <!--<Button icon="pi pi-times" class="p-button-danger p-button-outlined"
+                            v-tooltip.top="'Limpiar'">
+                        </Button>-->
+                        <InputText placeholder="código o categoría" v-model="filters" style="text-transform: uppercase"/>
                         <Button icon="pi pi-search" class="p-button-primary p-button-outlined"
-                            v-tooltip.top="'Filtrar Productos'" @click="listar()">
+                            v-tooltip.top="'Filtrar'" @click="listar()">
                         </Button>
                     </div>
                 </div>
@@ -136,6 +139,7 @@ export default {
                     arrayProducto.value = res.data.data
                     totalRecords.value  = res.data.total
                     loading.value = false
+                    filters.value = ''
                 }, 2000)
             })
         }

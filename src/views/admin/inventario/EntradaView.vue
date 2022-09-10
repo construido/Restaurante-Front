@@ -1,14 +1,9 @@
 <template>
     <div class="card">
         <Toolbar class="mb-2">
-            <template #start>
+            <!--<template #start>
                 <Button label="Nuevo Producto" icon="pi pi-external-link" @click="$router.push('/producto/nuevo')"></Button>
-                <div class="flex align-items-center flex-column sm:flex-row">
-                    <Chip label="activo" class="mr-2 ml-2 activo"/>
-                    <Chip label="inactivo" class="mr-2 inactivo"/>
-                    <Chip label="stock mínimo" class="mr-2 minimo"/>
-                </div>
-            </template>
+            </template>-->
             <template #end>
                 <div class="p-fluid">
                     <div class="col-12 md:col-12">
@@ -23,7 +18,7 @@
             </template>
         </Toolbar>
 
-        <DataTable :value="arrayProducto" responsiveLayout="scroll" class="p-datatable-sm" :rowClass="rowClass"
+        <DataTable :value="arrayProducto" responsiveLayout="scroll" class="p-datatable-sm"
                 ref="dt" :lazy="true" :rows="1000" :paginator="true" :loading="loading" :totalRecords="totalRecords"
                 @page="onPage($event)" paginatorTemplate="CurrentPageReport" scrollHeight="800px"
                 :currentPageReportTemplate="'Cantidad de Productos {totalRecords} - Valor: ' + total">
@@ -32,27 +27,24 @@
                     {{ slotProps.index + 1 }}
                 </template>
             </Column>
-            <Column field="Codigo_Producto" header="CÓDIGO"></Column>
-            <Column field="Nombre_Producto" header="NOMBRE"></Column>
-            <Column field="Descripcion_Producto" header="DESCRIPCIÓN"></Column>
-            <Column field="Categoria" header="CATEGORIA"></Column>
-            <Column header="P. Compra"  class="text-right">
+            <Column field="ID_Compra" header="COMPRA"></Column>
+            <Column header="FECHA VENTA" class="text-right" style="white-space:nowrap">
                 <template #body="slotProps">
-                    {{formatCurrency(slotProps.data.Precio_Compra_P)}}
+                    {{formatDate(slotProps.data.Fecha_Compra)}}
                 </template>
             </Column>
-            <Column header="P. Venta"  class="text-right">
+            <Column field="Codigo_Producto" header="CÓDIGO" class="text-right"></Column>
+            <Column field="Nombre_Producto" header="PRODUCTO"></Column>
+            <Column field="Nombre_Categoria" header="CATEGORÍA"></Column>
+            <Column header="PRECIO" class="text-right">
                 <template #body="slotProps">
-                    {{formatCurrency(slotProps.data.Precio_Venta_P)}}
+                    {{formatCurrency(slotProps.data.Precio_Compra)}}
                 </template>
             </Column>
-            <Column field="Ingreso_Producto" header="INGRESO" class="text-right"></Column>
-            <Column field="Salida_Producto" header="SALIDA" class="text-right"></Column>
-            <Column field="Stock" header="STOCK" class="text-right"></Column>
-            <Column field="Stock_Minimo" header="S/M" class="text-right"></Column>
-            <Column header="S. TOTAL"  class="text-right">
+            <Column field="Cantidad_Compra" header="CANTIDAD" class="text-right"></Column>
+            <Column header="S. TOTAL" class="text-right" style="white-space:nowrap">
                 <template #body="slotProps">
-                    {{formatCurrency((slotProps.data.Precio_Venta_P * slotProps.data.Stock))}}
+                    {{formatCurrency(slotProps.data.Monto_Parcial_Compra)}}
                 </template>
             </Column>
         </DataTable>
@@ -63,6 +55,7 @@
 import * as producto from "@/services/producto.service"
 import { ref, onMounted } from "vue"
 import store from '@/store'
+import moment from 'moment'
 
 export default {
     setup(){
@@ -78,14 +71,6 @@ export default {
         }
         const arrayProducto = ref()
 
-        const rowClass = (data) => {
-            let row
-
-            if((data.Estado_Producto == 1) && (data.Stock > data.Stock_Minimo)) return row = 'row-activo'
-            else if((data.Estado_Producto == 1) && (data.Stock <= data.Stock_Minimo)) return row = 'row-stock-minimo'
-            else return row = 'row-inactivo'
-        }
-
         onMounted(() => {
             lazyParams.value = {
                 first: 0,
@@ -100,18 +85,19 @@ export default {
 
         function sumaTotal(datos){
             for(var i=0; i<datos.length; i++) {
-                total.value = total.value + (datos[i].Stock * datos[i].Precio_Venta_P)
+                total.value = total.value + datos[i].Monto_Parcial_Compra
+                totalRecords.value = totalRecords.value + datos[i].Cantidad_Compra
             }
 
-            total.value = formatCurrency(total.value)
+            total.value = formatCurrency(total.value) ? formatCurrency(total.value) : 0
         }
         function listar(){
-            producto.listar(lazyParams.value, filters.value)
+            producto.entrada(lazyParams.value, filters.value)
             .then(res => {
                 loading.value = true
                 setTimeout(() => {
                     arrayProducto.value = res.data.data
-                    totalRecords.value  = res.data.total
+                    // totalRecords.value  = res.data.total
                     filters.value = ''
                     total.value = 0
                     sumaTotal(res.data.data)
@@ -124,45 +110,26 @@ export default {
 				return value.toLocaleString('es-BO', {style: 'currency', currency: 'BOB'});
 			return;
         }
+        const formatDate = (value) => {
+            if(value)
+				return moment(value).format("DD-MM-YY")
+			return;
+        }
 
         return{
             dt,
             onPage,
             filters,
             loading,
-            rowClass,
             totalRecords,
 
             total,
             listar,
 
+            formatDate,
             arrayProducto,
             formatCurrency,
         }
     }
 }
 </script>
-<style scoped lang="scss">
-    ::v-deep(.row-activo) {
-        background-color: rgba(60, 179, 113, 0.2) !important;
-    }
-    ::v-deep(.row-inactivo) {
-        background-color: rgba(0, 0, 255, 0.1) !important;
-    }
-    ::v-deep(.row-stock-minimo) {
-        background-color: rgba(255, 48, 46, 0.2) !important;
-    }
-
-    .p-chip.activo {
-        background-color: rgba(60, 179, 113, 0.2) !important;
-        color: rgb(0, 0, 0) !important; //var(--primary-color-text);
-    }
-    .p-chip.inactivo {
-        background-color: rgba(0, 0, 255, 0.1) !important;
-        color: rgb(0, 0, 0) !important; //var(--primary-color-text);
-    }
-    .p-chip.minimo {
-        background-color: rgba(255, 48, 46, 0.2) !important;
-        color: rgb(0, 0, 0) !important; //var(--primary-color-text);
-    }
-</style>

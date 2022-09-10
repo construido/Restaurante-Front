@@ -6,7 +6,7 @@
         <div class="field col-12 md:col-4">
             <span class="p-inputgroup">
                 <span class="p-float-label">
-                    <InputText id="buscar" type="text" v-model="buscar"/>
+                    <InputText id="buscar" type="text" v-model="buscar" style="text-transform: uppercase"/>
                     <label for="buscar">Nombre o Código</label>
                 </span>
                 <Button v-tooltip.top="'Buscar Producto'" icon="pi pi-search" class="p-button-primary" @click="buscarProduco()"></Button>

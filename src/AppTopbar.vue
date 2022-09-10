@@ -1,7 +1,6 @@
 <template>
 
 	<Toast/>
-	<ConfirmDialog></ConfirmDialog>
 
 	<div class="layout-topbar">
 		<router-link to="/" class="layout-topbar-logo">

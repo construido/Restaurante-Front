@@ -8,6 +8,14 @@ export function buscar(buscar) {
     return http().get('verify/buscarProducto?Codigo='+buscar)
 }
 
+export function entrada(params, filters) {
+    return http().get('verify/entradaProducto?page=' + (params.page + 1) + '&rows=' + params.rows+ '&filters=' + filters)
+}
+
+export function salida(params, filters) {
+    return http().get('verify/salidaProducto?page=' + (params.page + 1) + '&rows=' + params.rows+ '&filters=' + filters)
+}
+
 export function guardar(producto) {
     return http().post('verify/guardarProducto', {
         'Venta': producto.venta,

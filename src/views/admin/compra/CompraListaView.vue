@@ -24,8 +24,8 @@
                 {{formatCurrency(slotProps.data.Monto_Total_Compra)}}
             </template>
         </Column>
-        <Column field="Empleado" header="EMPLEADO" ></Column>
         <Column field="Proveedor" header="PROVEEDOR"></Column>
+        <Column v-if="estado == 1" field="Empleado" header="EMPLEADO" ></Column>
         <Column header="ESTADO">
             <template #body="slotProps">
                 <span v-if="slotProps.data.Estado_Compra" style="color: darkgreen"> <b> Activo </b> </span>
@@ -48,7 +48,7 @@
 import ModalDetalle from "@/components/compra/ModalDetalle.vue"
 import * as compra from "@/services/compra.service"
 import { ref, onMounted } from "vue"
-import moment from 'moment';
+import moment from 'moment'
 
 export default {
     components: {
@@ -57,7 +57,7 @@ export default {
 
     setup(){
         const arrayCompra = ref()
-
+        const estado = localStorage.getItem('estado')
         const dt = ref()
         const loading = ref(false)
         const lazyParams = ref()
@@ -103,6 +103,8 @@ export default {
         }
 
         return{
+            estado,
+
             dt,
             onPage,
             loading,

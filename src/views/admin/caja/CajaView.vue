@@ -30,7 +30,7 @@
 
                 <div class="field col-12 md:col-12">
                     <span class="p-float-label">
-                        <Textarea id="textarea" rows="3" v-model="datosCaja.observacion"></Textarea>
+                        <Textarea id="textarea" rows="3" v-model="datosCaja.observacion" style="text-transform: uppercase"></Textarea>
                         <label for="textarea">Observacion</label>
                     </span>
                 </div>
@@ -86,7 +86,7 @@
                 </template>
             </Column>
             <Column field="Observacion" header="OBSERVACION"></Column>
-            <Column field="Empleado" header="EMPLEADO"></Column>
+            <Column v-if="estado == 1" field="Empleado" header="EMPLEADO"></Column>
             <Column field="Estado_Caja" header="ESTADO">
                 <template #body="slotProps">
                     <span v-if="slotProps.data.Estado_Caja == 1" style="color: darkgreen"> <b> Abierto </b> </span>
@@ -139,6 +139,7 @@ import moment from 'moment'
 
 export default {
     setup(){
+        const estado = localStorage.getItem('estado')
         const toast = useToast()
         const btnCerrar = ref(1)
         const header = ref('ABRIR CAJA')
@@ -283,6 +284,8 @@ export default {
         }
 
         return {
+            estado,
+
             dt,
             onPage,
             onSort,

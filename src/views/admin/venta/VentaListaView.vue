@@ -29,7 +29,7 @@
             </template>
         </Column>
         <Column field="Cliente" header="CLIENTE"></Column>
-        <Column field="Empleado" header="EMPLEADO" ></Column>
+        <Column v-if="estado == 1" field="Empleado" header="EMPLEADO" ></Column>
         <Column header="ESTADO">
             <template #body="slotProps">
                 <span v-if="slotProps.data.Estado_Venta" style="color: darkgreen"> <b> Activo </b> </span>
@@ -61,7 +61,7 @@ export default {
 
     setup(){
         const arrayVenta = ref()
-
+        const estado = localStorage.getItem('estado')
         const dt = ref()
         const loading = ref(false)
         const lazyParams = ref()
@@ -106,6 +106,8 @@ export default {
         }
 
         return{
+            estado,
+
             dt,
             onPage,
             loading,

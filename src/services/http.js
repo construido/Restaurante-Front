@@ -21,7 +21,8 @@ export function http(){
         (error) => {
             console.log("******* INTERCEPTANDO ******");
             if(error.response.status === 401){
-                window.location.href = "/login"
+                // window.location.href = "/login"
+                return error.response.status
             }
             
             if(error.response.status === 403) {

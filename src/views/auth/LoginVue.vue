@@ -1,5 +1,7 @@
 <template>
 
+    <Toast/>
+
     <div class="surface-0 flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden">
         <div class="grid justify-content-center p-2 lg:p-0" style="min-width:80%">
             <div class="col-12 xl:col-6" style="border-radius:56px; padding:0.3rem; background: linear-gradient(180deg, var(--primary-color), rgba(33, 150, 243, 0) 30%);">
@@ -26,34 +28,43 @@
 
 <script>
 import * as authService from "@/services/auth.service"
+import { useToast } from "primevue/usetoast"
+import router from "@/router"
+import { ref } from "vue"
 
 export default {
-    data(){
+    setup(){
+        const credenciales = ref({})
+        const toast = useToast()
+
+        function toastMessage(message){
+            toast.add({severity: 'error', summary: 'ERROR', detail: message, life: 3000})
+        }
+        function login(){
+            authService.login(credenciales.value)
+            .then(res => {
+                if (res == 422){
+                    toastMessage('Debe llenar todos los campos')
+                }else{
+                    if(res == 401){
+                        toastMessage('Credenciales inválidos')
+                    }else{
+                        localStorage.setItem('token', res.data.token.token)
+                        localStorage.setItem('estado', res.data.data.Estado_Login)
+                        //console.log(res.data.data.Estado_Login)
+                        router.push('/')
+                    }
+                }
+            })
+            .catch(err =>{
+                console.log(err)
+            })
+        }
+
         return {
-            credenciales: {
-                Usuario: null,
-                password: null
-            }
-        }
-    },
+            login,
 
-    methods: {
-        async login(){
-            try {
-                const { data } = await authService.login(this.credenciales)
-                localStorage.setItem('token', data.token.token)
-                console.log(data)
-                this.$router.push('/')
-            } catch (error) {
-                console.log("******************* vista: ", error.message)
-            }
-        }
-    },
-
-    computed: {
-        logoColor() {
-            if (this.$appState.darkTheme) return 'white';
-            return 'dark';
+            credenciales
         }
     }
 }
