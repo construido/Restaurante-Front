@@ -24,9 +24,25 @@
         </Toolbar>
 
         <DataTable :value="arrayProducto" responsiveLayout="scroll" class="p-datatable-sm" :rowClass="rowClass"
-                ref="dt" :lazy="true" :rows="1000" :paginator="true" :loading="loading" :totalRecords="totalRecords"
-                @page="onPage($event)" paginatorTemplate="CurrentPageReport" scrollHeight="800px"
-                :currentPageReportTemplate="'Cantidad de Productos {totalRecords} - Valor: ' + total">
+            ref="dt" :lazy="true" :rows="1000" :paginator="true" :loading="loading" :totalRecords="totalRecords"
+            @page="onPage($event)" paginatorTemplate="CurrentPageReport" scrollHeight="800px"
+            :currentPageReportTemplate="'Cantidad de Productos {totalRecords} - Valor: ' + total">
+            <template #header>
+                <div class="table-header text-center">
+                    LISTA DE PRODUCTOS EN INVETARIO
+                    <vue-excel-xlsx
+                        :data="arrayProducto"
+                        :columns="columns"
+                        :file-name="'inventario'"
+                        :file-type="'xlsx'"
+                        :sheet-name="'hoja 1'"
+                        >
+                        <i class="pi pi-download"></i>
+                        Exportar
+                    </vue-excel-xlsx>
+                    <!--<Button icon="pi pi-download" label="Exportar" @click="exportCSV()"></Button> -->
+                </div>
+            </template>
             <Column header="#" class="text-right">
                 <template #body="slotProps">
                     {{ slotProps.index + 1 }}
@@ -36,12 +52,12 @@
             <Column field="Nombre_Producto" header="NOMBRE"></Column>
             <Column field="Descripcion_Producto" header="DESCRIPCIÓN"></Column>
             <Column field="Categoria" header="CATEGORIA"></Column>
-            <Column header="P. Compra"  class="text-right">
+            <Column header="P. Compra" class="text-right" style="white-space:nowrap">
                 <template #body="slotProps">
                     {{formatCurrency(slotProps.data.Precio_Compra_P)}}
                 </template>
             </Column>
-            <Column header="P. Venta"  class="text-right">
+            <Column header="P. Venta" class="text-right" style="white-space:nowrap">
                 <template #body="slotProps">
                     {{formatCurrency(slotProps.data.Precio_Venta_P)}}
                 </template>
@@ -66,6 +82,18 @@ import store from '@/store'
 
 export default {
     setup(){
+        const columns = ref ([
+                { label: "CÓDIGO", field: "Codigo_Producto" },
+                { label: "PRODUCTO", field: "Nombre_Producto" },
+                { label: "CATEGORIA", field: "Categoria" },
+                { label: "PRECIO COMPRA", field: "Precio_Compra_P" },
+                { label: "PRECIO VENTA", field: "Precio_Venta_P" },
+                { label: "INGRESO", field: "Ingreso_Producto" },
+                { label: "SALIDA", field: "Salida_Producto" },
+                { label: "STOCK", field: "Stock" },
+                { label: "STOCK MÍNIMO", field: "Stock_Minimo" },
+            ])
+
         const total = ref(0)
         const dt = ref()
         const filters = ref('')
@@ -101,6 +129,7 @@ export default {
         function sumaTotal(datos){
             for(var i=0; i<datos.length; i++) {
                 total.value = total.value + (datos[i].Stock * datos[i].Precio_Venta_P)
+                totalRecords.value = totalRecords.value + datos[i].Stock
             }
 
             total.value = formatCurrency(total.value)
@@ -111,7 +140,7 @@ export default {
                 loading.value = true
                 setTimeout(() => {
                     arrayProducto.value = res.data.data
-                    totalRecords.value  = res.data.total
+                    totalRecords.value  = 0 //res.data.total
                     filters.value = ''
                     total.value = 0
                     sumaTotal(res.data.data)
@@ -124,6 +153,9 @@ export default {
 				return value.toLocaleString('es-BO', {style: 'currency', currency: 'BOB'});
 			return;
         }
+        const exportCSV = () => {
+            dt.value.exportCSV()
+        }
 
         return{
             dt,
@@ -131,6 +163,10 @@ export default {
             filters,
             loading,
             rowClass,
+
+            exportCSV,
+            columns,
+
             totalRecords,
 
             total,
@@ -164,5 +200,10 @@ export default {
     .p-chip.minimo {
         background-color: rgba(255, 48, 46, 0.2) !important;
         color: rgb(0, 0, 0) !important; //var(--primary-color-text);
+    }
+    .table-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
     }
 </style>

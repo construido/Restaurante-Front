@@ -57,7 +57,7 @@
         <Column :exportable="false" style="min-width:8rem" header="ACCIONES">
             <template #body="slotProps">
                 <Button icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"
-                v-tooltip.top="'Editar Producto'" @click="cargarObjeto(slotProps.data)">
+                    v-tooltip.top="'Editar Producto'" @click="cargarObjeto(slotProps.data)">
                 </Button>
                 <Button v-if="slotProps.data.Estado_Producto" v-tooltip.top="'Desactivar Producto'" icon="pi pi-lock" 
                     class="p-button-rounded p-button-danger mr-2" @click="confirmar(slotProps.data)">

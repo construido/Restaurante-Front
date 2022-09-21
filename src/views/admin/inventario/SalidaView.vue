@@ -4,6 +4,9 @@
             <!--<template #start>
                 <Button label="Nuevo Producto" icon="pi pi-external-link" @click="$router.push('/producto/nuevo')"></Button>
             </template>-->
+            <template #start>
+                <h4> <b> SALIDA DE PRODUCTOS </b> </h4>
+            </template>
             <template #end>
                 <div class="p-fluid">
                     <div class="col-12 md:col-12">
@@ -19,16 +22,22 @@
         </Toolbar>
 
         <DataTable :value="arrayProducto" responsiveLayout="scroll" class="p-datatable-sm"
-                ref="dt" :lazy="true" :rows="1000" :paginator="true" :loading="loading" :totalRecords="totalRecords"
-                @page="onPage($event)" paginatorTemplate="CurrentPageReport" scrollHeight="800px"
-                :currentPageReportTemplate="'Cantidad de Productos {totalRecords} - Valor: ' + total">
+            ref="dt" :lazy="true" :rows="1000" :paginator="true" :loading="loading" :totalRecords="totalRecords"
+            @page="onPage($event)" paginatorTemplate="CurrentPageReport" scrollHeight="800px"
+            :currentPageReportTemplate="'Cantidad de Productos {totalRecords} - Valor: ' + total">
+            <template #header>
+                <div class="table-header">
+                    LISTADO
+                    <Button icon="pi pi-download" label="Exportar"></Button> <!--icon="pi pi-upload"-->
+                </div>
+            </template>
             <Column header="#" class="text-right">
                 <template #body="slotProps">
                     {{ slotProps.index + 1 }}
                 </template>
             </Column>
-            <Column field="ID_Venta" header="VENTA"></Column>
-            <Column header="FECHA VENTA" class="text-right" style="white-space:nowrap">
+            <!--<Column field="ID_Venta" header="VENTA"></Column>-->
+            <Column header="FECHA" class="text-right" style="white-space:nowrap">
                 <template #body="slotProps">
                     {{formatDate(slotProps.data.Fecha_Venta)}}
                 </template>
@@ -133,3 +142,11 @@ export default {
     }
 }
 </script>
+
+<style lang="scss" scoped>
+    .table-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+</style>

@@ -105,8 +105,11 @@ import './registerServiceWorker'
 import router from './router'
 import store from './store'
 
-const app = createApp(AppWrapper)
+import VueExcelXlsx from 'vue-excel-xlsx'
+//Vue.use(VueExcelXlsx)
 
+const app = createApp(AppWrapper)
+app.use(VueExcelXlsx)
 app.config.globalProperties.$appState = reactive({ theme: 'lara-light-indigo', darkTheme: false });
 
 app.use(PrimeVue, { ripple: true, inputStyle: 'outlined' });

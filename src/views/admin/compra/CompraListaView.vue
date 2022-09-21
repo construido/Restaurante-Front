@@ -13,7 +13,11 @@
         ref="dt" :lazy="true" :rows="10" :paginator="true" :loading="loading" :totalRecords="totalRecords" @page="onPage($event)"
         paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
         :rowsPerPageOptions="[5, 10, 20, 50, 100]" currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} Compras">
-        <Column field="ID_Compra" header="#" class="text-right"></Column>
+        <Column header="#" class="text-right">
+            <template #body="slotProps">
+                {{ slotProps.index + 1 }}
+            </template>
+        </Column>
         <Column header="FECHA" class="text-right">
             <template #body="slotProps">
                 {{formatDate(slotProps.data.Fecha_Compra)}}
@@ -35,7 +39,9 @@
         <Column :exportable="false" style="min-width:8rem" header="ACCIONES">
             <template #body="slotProps">
                 <ModalDetalle :compra="slotProps.data.ID_Compra"></ModalDetalle>
-                <Button icon="pi pi-print" title="Imprimir Compra" class="p-button-rounded p-button-secondary mr-2 ml-2"></Button>
+                <Button icon="pi pi-print" title="Imprimir Compra" class="p-button-rounded p-button-secondary mr-2 ml-2"
+                    @click="imprimirCompra(slotProps.data.ID_Compra)">
+                </Button>
                 <Button v-if="slotProps.data.Estado_Compra" title="Desactivar" icon="pi pi-lock"
                     class="p-button-rounded p-button-danger">
                 </Button>
@@ -98,12 +104,24 @@ export default {
         }
         const formatDate = (value) => {
             if(value)
-				return moment(value).format("DD/MM/YY")
+				return moment(value).format("DD-MM-YY")
 			return;
+        }
+        function imprimirCompra($compra){
+            compra.PDF($compra)
+            .then(res => {
+                const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }));
+                const link = document.createElement('a')
+                link.href = url
+                link.target = '_blank'
+                document.body.appendChild(link)
+                link.click()
+            })
         }
 
         return{
             estado,
+            imprimirCompra,
 
             dt,
             onPage,

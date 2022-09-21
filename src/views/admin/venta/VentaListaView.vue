@@ -39,7 +39,9 @@
         <Column :exportable="false" style="min-width:8rem" header="ACCIONES">
             <template #body="slotProps">
                 <ModalDetalle :venta="slotProps.data.ID_Venta"></ModalDetalle>
-                <Button icon="pi pi-print" title="Imprimir Venta" class="p-button-rounded p-button-secondary mr-2 ml-2"></Button>
+                <Button icon="pi pi-print" title="Imprimir Venta" class="p-button-rounded p-button-secondary mr-2 ml-2"
+                    @click="imprimirVenta(slotProps.data.ID_Venta)">
+                </Button>
                 <Button v-if="slotProps.data.Estado_Venta" title="Desactivar" icon="pi pi-lock"
                     class="p-button-rounded p-button-danger">
                 </Button>
@@ -101,12 +103,24 @@ export default {
         }
         const formatDate = (value) => {
             if(value)
-				return moment(value).format("DD/MM/YY")
+				return moment(value).format("DD-MM-YY")
 			return;
+        }
+        function imprimirVenta($venta){
+            venta.PDF($venta)
+            .then(res => {
+                const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }));
+                const link = document.createElement('a')
+                link.href = url
+                link.target = '_blank'
+                document.body.appendChild(link)
+                link.click()
+            })
         }
 
         return{
             estado,
+            imprimirVenta,
 
             dt,
             onPage,

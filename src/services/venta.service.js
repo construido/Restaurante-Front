@@ -15,3 +15,7 @@ export function guardar(cliente, detalle, total) {
         'Productos': detalle
     })
 }
+
+export function PDF($venta) {
+    return http().get('verify/imprimirVenta?Venta=' + $venta, {responseType: 'blob'})
+}

@@ -15,3 +15,7 @@ export function guardar(proveedor, detalle, total) {
         'Proveedor': proveedor,
     })
 }
+
+export function PDF($compra) {
+    return http().get('verify/imprimirCompra?Compra=' + $compra, {responseType: 'blob'})
+}

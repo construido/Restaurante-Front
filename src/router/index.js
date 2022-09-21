@@ -115,6 +115,11 @@ const routes = [
         name: 'caja',
         component: () => import(/* webpackChunkName: "about" */ '../views/admin/caja/CajaView.vue')
       },
+      {
+        path: '/usuario',
+        name: 'usuario',
+        component: () => import(/* webpackChunkName: "about" */ '../views/admin/usuario/UsuariosView.vue')
+      },
     ]
   },
   {

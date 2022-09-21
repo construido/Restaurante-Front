@@ -49,10 +49,13 @@ export default {
                     if(res == 401){
                         toastMessage('Credenciales inválidos')
                     }else{
-                        localStorage.setItem('token', res.data.token.token)
-                        localStorage.setItem('estado', res.data.data.Estado_Login)
-                        //console.log(res.data.data.Estado_Login)
-                        router.push('/')
+                        if(res == 403){
+                            toastMessage('Usuario suspendido')
+                        }else{
+                            localStorage.setItem('token', res.data.token.token)
+                            localStorage.setItem('estado', res.data.data.Estado_Login)
+                            router.push('/')
+                        }
                     }
                 }
             })

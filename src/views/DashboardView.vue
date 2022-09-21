@@ -72,9 +72,9 @@
                         </div>
                         <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
                             <div class="surface-300 border-round overflow-hidden w-10rem lg:w-6rem" style="height:8px">
-                                <div :class="color[index] + ' h-full'" :style="'width:' + producto.Porcentaje"></div>
+                                <div :class="color[index] + ' h-full'" :style="'width:' + producto.Porcentaje + '%'"></div>
                             </div>
-                            <span :class="text[index] + ' ml-3 font-medium'">{{ producto.Porcentaje }}</span>
+                            <span :class="text[index] + ' ml-3 font-medium'">{{ producto.Porcentaje + '%'}}</span>
                         </div>
                     </li>
                 </ul>

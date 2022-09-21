@@ -4,6 +4,9 @@
             <!--<template #start>
                 <Button label="Nuevo Producto" icon="pi pi-external-link" @click="$router.push('/producto/nuevo')"></Button>
             </template>-->
+            <template #start>
+                <h4> <b> ENTRADAS DE PRODUCTOS </b> </h4>
+            </template>
             <template #end>
                 <div class="p-fluid">
                     <div class="col-12 md:col-12">
@@ -27,8 +30,8 @@
                     {{ slotProps.index + 1 }}
                 </template>
             </Column>
-            <Column field="ID_Compra" header="COMPRA"></Column>
-            <Column header="FECHA VENTA" class="text-right" style="white-space:nowrap">
+            <!--<Column field="ID_Compra" header="COMPRA"></Column>-->
+            <Column header="FECHA" class="text-right" style="white-space:nowrap">
                 <template #body="slotProps">
                     {{formatDate(slotProps.data.Fecha_Compra)}}
                 </template>

@@ -35,15 +35,16 @@ export default {
             overlayMenuActive: false,
             mobileMenuActive: false,
             menu : [
-                {
+                /*{
                     label: 'Home',
                     items: [{
                         label: 'Dashboard', icon: 'pi pi-fw pi-chart-bar', to: '/'
                     }]
-                },
+                },*/
 				{
-					label: 'Registro', icon: 'pi pi-fw pi-sitemap',
+					label: 'Menú', icon: 'pi pi-fw pi-sitemap',
 					items: [
+                        {label: 'Dashboard', icon: 'pi pi-fw pi-chart-bar', to: '/'},
                         {label: 'Caja', icon: 'pi pi-fw pi-inbox', to: '/caja'},
 						{label: 'Venta', icon: 'pi pi-fw pi-wallet', to: '/venta'},
                         {label: 'Compra', icon: 'pi pi-fw pi-money-bill', to: '/compra'},
@@ -51,17 +52,13 @@ export default {
 						{label: 'Producto', icon: 'pi pi-fw pi-shopping-cart', to: '/producto'},
                         {label: 'Categoria', icon: 'pi pi-fw pi-tags', to: '/categoria'},
                         {label: 'Proveedor', icon: 'pi pi-fw pi-shopping-bag', to: '/proveedor'},
-					]
-				},
-                {
-                    label: 'Mantenimiento', icon: 'pi pi-fw pi-search',
-                    items: [
+                        {label: 'Usuario', icon: 'pi pi-fw pi-user', to: '/usuario'},
                         {
                             label: 'Inventario', icon: 'pi pi-fw pi-book',
                             items: [
-                                {label: 'Todo', icon: 'pi pi-fw pi-shopping-cart', to: '/inventario'},
-                                {label: 'Salida', icon: 'pi pi-fw pi-upload', to: '/salida'},
+                                {label: 'Productos', icon: 'pi pi-fw pi-shopping-cart', to: '/inventario'},
                                 {label: 'Entrada', icon: 'pi pi-fw pi-download', to: '/entrada'},
+                                {label: 'Salida', icon: 'pi pi-fw pi-upload', to: '/salida'},
                             ]
                         },
                         {
@@ -71,15 +68,8 @@ export default {
                                 {label: 'Inventario', icon: 'pi pi-fw pi-book'},
                             ]
                         },
-                    ]
-                },
-                /*{
-                    label: 'Información', 
-                    items: [
-                        {label: 'About', icon: 'pi pi-fw pi-info-circle', to: '/about'},
-                        {label: 'Home', icon: 'pi pi-fw pi-home', to: '/home'},
-                    ]
-                }*/
+					]
+				},
             ]
         }
     },
