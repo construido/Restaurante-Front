@@ -73,6 +73,19 @@
             </Column>
         </DataTable>
     </div>
+
+    <Dialog header="ACCESO DENEGADO" v-model:visible="displayConfirmation" :breakpoints="{'960px': '75vw', '640px': '90vw'}" :style="{width: '350px'}" :modal="true">
+        <div class="confirmation-content" style="text-align: center;">
+            <i class="pi pi-ban mr-3" style="font-size: 5rem; color: red;" />
+            <!--<span style="color: red">
+                <b>ACCESO DENEGADO</b>
+            </span>-->
+        </div>
+        <template #footer>
+            <Button label="ACEPTAR" icon="pi pi-check" @click="closeConfirmation" class="p-button-text p-button-secondary" autofocus />
+        </template>
+    </Dialog>
+
 </template>
 
 <script>
@@ -84,6 +97,7 @@ import { useConfirm } from "primevue/useconfirm"
 import { useToast } from "primevue/usetoast"
 import { ref, onMounted } from "vue"
 import moment from 'moment'
+import router from "@/router"
 
 export default {
     components: {
@@ -93,6 +107,7 @@ export default {
     },
 
     setup(){
+        const displayConfirmation = ref(false);
         const dt = ref()
         const filters = ref('')
         const loading = ref(false)
@@ -102,6 +117,7 @@ export default {
             lazyParams.value = event
             listar()
         }
+
         const toast = useToast()
         const confirm = useConfirm()
         const arrayUsuario = ref()
@@ -134,6 +150,14 @@ export default {
             });
         }
 
+        const openConfirmation = () => {
+            displayConfirmation.value = true;
+        };
+        const closeConfirmation = () => {
+            displayConfirmation.value = false;
+            router.go(-1)
+        };
+
         onMounted(() => {
             lazyParams.value = {
                 first: 0,
@@ -154,13 +178,19 @@ export default {
             usuario.listar(lazyParams.value, filters.value)
             .then(res => {
                 loading.value = true
-                setTimeout(() => {
-                    arrayUsuario.value = res.data.data
-                    totalRecords.value  = res.data.total
+                if(res == 403){
+                    openConfirmation()
                     loading.value = false
-                }, 2000)
+                }else{
+                    setTimeout(() => {
+                        arrayUsuario.value = res.data.data
+                        totalRecords.value  = res.data.total
+                        loading.value = false
+                    }, 2000)
+                }
             });
         }
+        
         function eliminar(){
             usuario.eliminar(datosUsuario.value)
             .then(res => {
@@ -178,7 +208,11 @@ export default {
 
             listar,
             confirmar,
-            arrayUsuario
+            arrayUsuario,
+
+            openConfirmation,
+            closeConfirmation,
+            displayConfirmation
         }
     }
 }

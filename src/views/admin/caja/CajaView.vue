@@ -95,8 +95,8 @@
             </Column>
             <Column header="ACCIONES" style="white-space:nowrap">
                 <template #body="slotProps">
-                    <Button icon="pi pi-eye" v-tooltip.top="'Ver Movimientos'" class="p-button-rounded p-button-info" @click="obtenerID(slotProps.data.ID_Caja)"></Button>
-                    <Button icon="pi pi-print" v-tooltip.top="'Imprimir Movimientos'"  class="p-button-rounded p-button-secondary ml-2"></Button>
+                    <Button icon="pi pi-eye" v-tooltip.top="'Ver'" class="p-button-rounded p-button-info" @click="obtenerID(slotProps.data.ID_Caja)"></Button>
+                    <Button icon="pi pi-print" v-tooltip.top="'Imprimir'" class="p-button-rounded p-button-secondary ml-2" @click="imprimirCaja(slotProps.data.ID_Caja)"></Button>
                     <template v-if="slotProps.data.Estado_Caja == 1">
                         <Button icon="pi pi-plus" v-tooltip.top="'Ingreso Caja'" 
                             class="p-button-rounded p-button-success ml-2" @click="obtenerDatos(slotProps.data.ID_Caja, 'Ingreso')">
@@ -282,9 +282,21 @@ export default {
                 }
             })
         }
+        function imprimirCaja($caja){
+            caja.PDF($caja)
+            .then(res => {
+                const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }));
+                const link = document.createElement('a')
+                link.href = url
+                link.target = '_blank'
+                document.body.appendChild(link)
+                link.click()
+            })
+        }
 
         return {
             estado,
+            imprimirCaja,
 
             dt,
             onPage,

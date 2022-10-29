@@ -20,16 +20,15 @@ export function http(){
         },
         (error) => {
             console.log("******* INTERCEPTANDO ******");
-            if(error.response.status === 401){
-                // window.location.href = "/login"
+            if(error.response.status === 401){ // no authorizado
                 return error.response.status
             }
             
-            if(error.response.status === 403) {
+            if(error.response.status === 403) { // permiso denegado
                 return error.response.status
             }
             
-            if(error.response.status === 422) {
+            if(error.response.status === 422) { // campo obligatorio
                 return error.response.status
             }
         }

@@ -34,3 +34,7 @@ export function cierre(caja) {
         'Observacion': caja.observacion
     })
 }
+
+export function PDF($caja) {
+    return http().get('verify/imprimirCaja?Caja=' + $caja, {responseType: 'blob'})
+}

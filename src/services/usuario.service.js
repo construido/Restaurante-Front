@@ -4,10 +4,6 @@ export function listar(params, filters) {
     return http().get('verify/listarEmpleados?page=' + (params.page + 1) + '&rows=' + params.rows+ '&filters=' + filters)
 }
 
-export function listarSelect() {
-    return http().get('verify/listarSelectCliente')
-}
-
 export function guardar(empleado) {
     return http().post('verify/guardarEmpleado', {
         'CI': empleado.ci,
